@@ -1,0 +1,8 @@
+"x"
+"NDVI" 0.99999999649583
+"HerbivorePredators_R" 0.999999922321569
+"HabitatHet" 0.974549767442281
+"WinterMinTemp" 0.649207134262509
+"TopographicHet" 0.309060531914063
+"IceFreeHistory" 0.285428440853195
+"as.factor(Regions)" 0.20537489232926

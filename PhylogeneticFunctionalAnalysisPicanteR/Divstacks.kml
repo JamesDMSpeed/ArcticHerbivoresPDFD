@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Folder>
+<name>Divstacks</name>
+<GroundOverlay>
+	<name>Species.richness</name>
+	<Icon><href>Divstacks_1.png</href></Icon>
+	<LatLonBox>
+		<north>84.5791014078693</north><south>8.25110140786935</south><east>181.45106038023</east><west>-179.34893961977</west>
+	</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+	<name>Phylogenetic.diversity</name>
+	<Icon><href>Divstacks_2.png</href></Icon>
+	<LatLonBox>
+		<north>84.5791014078693</north><south>8.25110140786935</south><east>181.45106038023</east><west>-179.34893961977</west>
+	</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+	<name>Functional.diversity</name>
+	<Icon><href>Divstacks_3.png</href></Icon>
+	<LatLonBox>
+		<north>84.5791014078693</north><south>8.25110140786935</south><east>181.45106038023</east><west>-179.34893961977</west>
+	</LatLonBox>
+</GroundOverlay>
+<GroundOverlay>
+	<name>Functional.Phylognetic.diversity</name>
+	<Icon><href>Divstacks_4.png</href></Icon>
+	<LatLonBox>
+		<north>84.5791014078693</north><south>8.25110140786935</south><east>181.45106038023</east><west>-179.34893961977</west>
+	</LatLonBox>
+</GroundOverlay>
+</Folder>
+</kml>
