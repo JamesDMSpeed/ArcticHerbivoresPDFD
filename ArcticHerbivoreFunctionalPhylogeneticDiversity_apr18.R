@@ -60,7 +60,7 @@ rl<-crop(spTransform(realmsP,crs(use1)),use1)
 #plot(realml)
 #writeRaster(realml,'CMEC regions & realms\\Regions.tif',overwrite=T)
 
-realms<-raster('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\CMEC regions & realms\\Regions.tif')
+realms<-raster('CMEC regions & realms\\Regions.tif')
 #levelplot(realms)+
 #layer(sp.polygons(allarc,add=T))
 
@@ -168,8 +168,8 @@ plot(pd_es_taxalab$pd.obs.p,pd_es_trialswap$pd.obs.p)
 plot(pd_es_taxalab$pd.obs.p,pd_es_indswap$pd.obs.p)
 
 #pd_es<-ses.pd(phydata$comm,phydata$phy,null.model='taxa.labels',runs=1000)
-#write.table(pd_es,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\pdes_apr18.txt')
-pd_es<-read.table('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\pdes_apr18.txt')
+#write.table(pd_es,'PhylogeneticFunctionalAnalysisPicanteR\\pdes_apr18.txt')
+pd_es<-read.table('PhylogeneticFunctionalAnalysisPicanteR\\pdes_apr18.txt')
 pd_es[pd_es$ntaxa>0,]
 
 pdesras<-raster(use1)
@@ -203,8 +203,8 @@ plot(fdras)
 fd_p<-fdras/sum(funcdata$phy$edge.length)
 
 #fd_es<-ses.pd(funcdata$comm,funcdata$phy,null.model='taxa.labels',runs=1000)
-#write.table(fd_es,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\fdes_apr18.txt')
-fd_es<-read.table('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\fdes_apr18.txt')
+#write.table(fd_es,'PhylogeneticFunctionalAnalysisPicanteR\\fdes_apr18.txt')
+fd_es<-read.table('PhylogeneticFunctionalAnalysisPicanteR\\fdes_apr18.txt')
 fd_es[fd_es$ntaxa>0,]
 
 fdesras<-raster(use1)
@@ -214,11 +214,11 @@ fdesras<-mask(fdesras,sr_geo,maskvalue=0)
 levelplot(fdesras,at=breaks,col.regions=cols,margin=F)
 
 # Ratio FD:PD -------------------------------------------------------------
-tiff('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityRatios.tif',res=150,width=6,height=6,units='in')
+tiff('PhylogeneticFunctionalAnalysisPicanteR\\DiversityRatios.tif',res=150,width=6,height=6,units='in')
 dfdat<-data.frame(realm=getValues(realms),sr_p=getValues(sr_p),pd_p=getValues(pd_p),fd_p=getValues(fd_p))
 dfdatstack<-stack(realms,divstack2)
 dfdat1<-rasterToPoints(dfdatstack)
-write.csv(dfdat1,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversitywithCoords.csv')
+write.csv(dfdat1,'PhylogeneticFunctionalAnalysisPicanteR\\DiversitywithCoords.csv')
 {par(mfrow=c(2,2))
 par(mar=c(5,5,2,1))
 with(dfdat,plot(sr_p,pd_p,xlab='Species richness \n (proportion of total)',ylab='Phylogenetic diversity \n (proportion of total)',las=1,ylim=c(0,1),type='n'))
@@ -299,8 +299,8 @@ fdpdratiofunc<-function(samp,tree1,tree2,runs=999)
                                            1), runs = runs, row.names = row.names(samp))
 }
 #fdpdrat<-fdpdratiofunc(phydata$comm,funcdata$phy,phydata$phy,runs=1000)
-#write.table(fdpdrat,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
-fdpdrat<-read.table('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
+#write.table(fdpdrat,'PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
+fdpdrat<-read.table('PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
 fdpdrat[fdpdrat$ntaxa>1,]
 fdpdnotsingle<-fdpdrat
 fdpdnotsingle$fdpd.obs.z[fdpdnotsingle$ntaxa<=1]<-NA#Remove communities with 1spp
@@ -311,8 +311,8 @@ levelplot(setValues(r1,fdpdrat$fdpd.obs.p),at=breaks,col.regions=cols,margin=F,m
 
 
 #fdpd<-pdtreeratio(funcdata$comm,funcdata$phy,phydata$phy,runs=1000)
-#write.table(fdpd,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
-fdpd<-read.table('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
+#write.table(fdpd,'PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
+fdpd<-read.table('PhylogeneticFunctionalAnalysisPicanteR\\fdpd_es_apr18.txt')
 fdpd[fdpd$ntaxa>1,]
 fdpdras<-raster(use1)
 fdpdras<-mask(setValues(fdpdras,fdpd$fdpd.obs.z),sr_geo,maskvalue=0)
@@ -349,22 +349,21 @@ levelplot(divstack,par.settings=YlOrRdTheme,scales=list(draw=FALSE))#+
 
 #divstack2<-stack(sr_p,pd_p,fd_p,fd_p/pd_p)
 #divstack2m<-mask(divstack2,sr_geo)
-#writeRaster(divstack2m,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityStack')
-divstack2<-stack('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityStack')
+#writeRaster(divstack2m,'PhylogeneticFunctionalAnalysisPicanteR\\DiversityStack')
+divstack2<-stack('PhylogeneticFunctionalAnalysisPicanteR\\DiversityStack')
 divstack2<-mask(divstack2,extend(envvars$CurrentIce,divstack2),maskvalue=1,updatevalue=NA)
 names(divstack2)<-c('Species richness','Phylogenetic diversity','Functional diversity','Functional divergence')
 my.at <- seq(0, 1, by = 0.1)
 levelplot(divstack2,at=my.at,par.settings=YlOrRdTheme())
 quantile(divstack2)
 
-writeRaster(divstack2,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityPatterns\\ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(divstack2))  
+writeRaster(divstack2,'PhylogeneticFunctionalAnalysisPicanteR\\DiversityPatterns\\ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(divstack2))  
 
 divstackll<-projectRaster(divstack2,crs='+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0' )
-KML(divstackll,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\Divstacks')
-require(hexbin)
-tiff('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.tif',width = 6,height=6,units='in',res=300)
-#postscript('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.ps',width = 6,height=6,pointsize=8)
-pdf('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.pdf',width = 6,height=6,pointsize=8)
+KML(divstackll,'PhylogeneticFunctionalAnalysisPicanteR\\Divstacks')
+
+tiff('PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.tif',width = 6,height=6,units='in',res=300)
+pdf('PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.pdf',width = 6,height=6,pointsize=8)
 
 p1 <- levelplot(divstack2[[1]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Species richness',cex=0.8))+
   layer(sp.points(np,col=1))+
@@ -390,7 +389,7 @@ p4 <- levelplot(divstack2[[4]], par.settings=BTCTheme(region=rev(BTC(9)),layout.
   print(p4, split=c(2, 2, 2, 2))
 dev.off()    
 
-#bitmap('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.ps', 
+#bitmap('PhylogeneticFunctionalAnalysisPicanteR\\DiversityMaps_apr18.ps', 
 #       type = "tiff24nc", height = 5, width = 8, res = 300, units = "in")
 
 
@@ -431,21 +430,21 @@ dev.off()
 
 #Effect sizes and randomisation tests
 #effsizestack<-stack(setValues(r1,pd_es$pd.obs.z),setValues(r1,fd_es$pd.obs.z),setValues(r1,fdpdnotsingle$fdpd.obs.z))
-#writeRaster(effsizestack,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\EffectSizesStack')
-effsizestack<-stack('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\EffectSizesStack')
+#writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR\\EffectSizesStack')
+effsizestack<-stack('PhylogeneticFunctionalAnalysisPicanteR\\EffectSizesStack')
 names(effsizestack)<-c('Phylogenetic diversity_es','Functional diversity_es','Functional divergence_es')
 effsizestack<-mask(effsizestack,envvars1$CurrentIce,maskvalue=1)
-writeRaster(effsizestack,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityPatterns\\ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(effsizestack))
+writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR\\DiversityPatterns\\ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(effsizestack))
 
 pes<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional/Phylogenetic diversity'),main='Standardised effect sizes')
 diverge0(pes,'RdBu')
 #randomstack<-stack(pdesras,fdesras,setValues(r1,fdpdnotsingle$fdpd.obs.p))
 #randomstackm<-mask(randomstack,sr_geo)
-#writeRaster(randomstackm,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\RandomStack')
-randomstack<-stack('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\RandomStack')
+#writeRaster(randomstackm,'PhylogeneticFunctionalAnalysisPicanteR\\RandomStack')
+randomstack<-stack('PhylogeneticFunctionalAnalysisPicanteR\\RandomStack')
 randomstack<-mask(randomstack,envvars1$CurrentIce,maskvalue=1)
 names(randomstack)<-c('Phylogenetic diversity_rank','Functional diversity_rank','Functional divergence_rank')
-writeRaster(randomstack,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityPatterns\\ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(randomstack))  
+writeRaster(randomstack,'PhylogeneticFunctionalAnalysisPicanteR\\DiversityPatterns\\ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(randomstack))  
 
 levelplot(randomstack,at=breaks,col.regions=cols,margin=F,scales=list(draw=FALSE),main='Randomisation test')#+
 # layer(sp.points(np,col=1))+
@@ -463,7 +462,7 @@ a[a<0.025]<-0
 rsig[[i]]<-rasterToPolygons(a,dissolve=T)
 }
 
-tiff('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\DiversityEffectSizeMaps_apr18.tif',width = 8,height=3,units='in',res=300)
+tiff('PhylogeneticFunctionalAnalysisPicanteR\\DiversityEffectSizeMaps_apr18.tif',width = 8,height=3,units='in',res=300)
 p.strip <- list(cex=0.8)
 #effsigplot<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional dispersion'),main='Standardised effect sizes', par.strip.text=p.strip)+
 effsigplot<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional divergence'),main='', par.strip.text=p.strip)+
@@ -488,8 +487,8 @@ alldatadf$HerbivorePredators_R<-resid(lm(alldatadf$HerbivorePredators~alldatadf$
 with(alldatadf,boxplot(WinterMinTemp~ArcticZone))#Can't use Arctic subzone as a predictor due to colinearlity with temperature
 
 standdf<-cbind(alldatadf[,1:2],scale(alldatadf[,3:29],scale=T,center=T))
-write.table(alldatadf,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\analysisdataframe.txt')
-write.table(standdf,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\standardised_analysisdataframe.txt')
+write.table(alldatadf,'PhylogeneticFunctionalAnalysisPicanteR\\analysisdataframe.txt')
+write.table(standdf,'PhylogeneticFunctionalAnalysisPicanteR\\standardised_analysisdataframe.txt')
 
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
@@ -501,12 +500,12 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
   if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
   text(0.5, 0.5, txt, cex = cex.cor * r)
 }
-tiff('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\EnvVarsPairs.tif',res=150,width=7,height=7,units='in')
+tiff('PhylogeneticFunctionalAnalysisPicanteR\\EnvVarsPairs.tif',res=150,width=7,height=7,units='in')
 pairs(alldatadf[,c(19,18,20,24,27,25)],upper.panel=panel.cor
       ,labels=c('Vegetation \nproductivity (NDVI)','Predator \n richness','Winter minimum\n temperature (x10)','Habitat \n heterogeneity','Topographic \n heterogeneity','Ice free period'))
 dev.off()
 
-tiff('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\PhylogeneticFunctionalAnalysisPicanteR\\ResponseEnvPairs.tif',res=150,width=12,height=7,units='in')
+tiff('PhylogeneticFunctionalAnalysisPicanteR\\ResponseEnvPairs.tif',res=150,width=12,height=7,units='in')
 par(mfrow=c(4,7))
 plot(alldatadf$Species.richness~alldatadf$NDVI,ylab='Species richness',xlab='Vegetation productivity \nNDVI')
 plot(alldatadf$Species.richness~alldatadf$HerbivorePredators_R,ylab='Species richness',xlab='Predator richness')
@@ -951,15 +950,13 @@ abline(v=0,lty=2)
 legend('topr',pch=16,col=rev(c('orange','blue','pink4')),legend=rev(c('Phylogenetic','Functional','Functional:Phylogenetic')),title='Effect size',cex=0.7)
 legend('topl',pch=c(1,16),col=1,c('P>=0.05','P<0.05'),cex=0.7,title='Significance')
 
-
-
 # Clustering --------------------------------------------------------------
 
 
 #PhyloS?rensen
 require(ape)
 #Range data
-spplist<-list.files('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/RangeMaps',full.names=T)
+spplist<-list.files('RangeMaps',full.names=T)
 
 herbstack<-stack(spplist)
 herbstack
@@ -967,7 +964,7 @@ herbstack
 #Only all reindeer, and drop sheep
 use1<-herbstack[[c(1:69,71:72,75:77)]]
 names(use1)[3]<-'Rangifer_tarandus'
-envvars1<-stack('~/DISENTANGLE/WP3/Arctic/EnvVars/Envvars1')
+envvars1<-stack('EnvVars/Envvars1')
 use1<-mask(use1,envvars1$CurrentIce,maskvalue=1)
 
 sr_geo<-sum(use1,na.rm=T)
