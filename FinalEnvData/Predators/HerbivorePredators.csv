@@ -1,0 +1,37 @@
+,Class,Order,Family,Common.name,Species,HerbivoreDiversity,link.to.distribution.map..IUCN.RedList.database.
+1,Aves,Strigiformes,Strigidae,boreal owl,Aegolius funereus,1,http://maps.iucnredlist.org/map.html?id=22689362
+2,Aves,Falconiformes,Accipitridae,golden eagle,Aquila chrysaetos,1,
+3,Aves,Strigiformes,Strigidae,short-eared owl,Asio flammeus,1,
+4,Aves,Strigiformes,Strigidae,Eurasian eagle-owl,Bubo bubo,1,http://maps.iucnredlist.org/map.html?id=22688927
+5,Aves,Strigiformes,Strigidae,snowy owl,Bubo scandiacus,1,
+6,Aves,Strigiformes,Strigidae,great horned owl,Bubo virginianus,1,http://maps.iucnredlist.org/map.html?id=61752071
+7,Aves,Falconiformes,Accipitridae,rough-legged hawk,Buteo lagopus,1,
+8,Aves,Falconiformes,Accipitridae,northern harrier,Circus cyaneus,1,
+9,Aves,Passeriformes,Corvidae,raven,Corvus corax,1,
+10,Aves,Falconiformes,Falconidae,Merlin,Falco columbarius,1,
+11,Aves,Falconiformes,Falconidae,peregrine falcon,Falco peregrinus,1,
+12,Aves,Falconiformes,Falconidae,gyrfalcon,Falco rusticolus,1,
+13,Aves,Falconiformes,Accipitridae,white-tailed eagle,Haliaeetus albicilla,1,
+14,Aves,Falconiformes,Accipitridae,bald eagle,Haliaeetus leucocephalus ,1,http://maps.iucnredlist.org/map.html?id=22695144
+15,Aves,Falconiformes,Accipitridae,Steller's Sea-eagle,Haliaeetus pelagicus,1,http://maps.iucnredlist.org/map.html?id=22695147
+22,Aves,Passeriformes,Corvidae,gray jay,Perisoreus canadensis,1,http://maps.iucnredlist.org/map.html?id=22705783
+23,Aves,Charadriiformes,Stercorariidae,long-tailed jaeger,Stercorarius longicaudus,1,
+24,Aves,Charadriiformes,Stercorariidae,parasitic jaeger,Stercorarius parasiticus,1,
+25,Aves,Charadriiformes,Stercorariidae,pomarine jaeger,Stercorarius pomarinus,1,
+26,Aves,Charadriiformes,Stercorariidae,great skua,Stercorarius skua,1,
+27,Aves,Strigiformes,Strigidae,great gray owl,Strix nebulosa,1,http://maps.iucnredlist.org/map.html?id=22689118
+28,Aves,Strigiformes,Strigidae,ural owl,Strix uralensis,1,http://maps.iucnredlist.org/map.html?id=22689108
+29,Aves,Strigiformes,Strigidae,northern hawk owl,Sturnia ulula,1,http://maps.iucnredlist.org/map.html?id=22689189
+31,Mammalia,Carnivora,Canidae,coyote,Canis latrans,1,
+32,Mammalia,Carnivora,Canidae,Gray wolf,Canis lupus,1,
+33,Mammalia,Carnivora,Mustelidae,Wolverine,Gulo gulo,1,
+34,Mammalia,Carnivora,Felidae,Canadian lynx,Lynx canadensis,1,
+35,Mammalia,Carnivora,Felidae,Eurasian lynx,Lynx lynx,1,
+36,Mammalia,Carnivora,Mustelidae,sable,Martes zibellina,1,http://maps.iucnredlist.org/map.html?id=41652
+37,Mammalia,Carnivora,Mustelidae,Ermine,Mustela erminea,1,
+38,Mammalia,Carnivora,Mustelidae,least weasel,Mustela nivalis,1,
+39,Mammalia,Carnivora,Mustelidae,American mink,Neovison vison,1,
+41,Mammalia,Carnivora,Ursidae,brown bear,Ursus arctos,1,
+42,Mammalia,Carnivora,Ursidae,polar bear,Ursus maritimus,1,http://maps.iucnredlist.org/map.html?id=22823
+43,Mammalia,Carnivora,Canidae,Arctic fox,Vulpes lagopus,1,
+44,Mammalia,Carnivora,Canidae,red fox,Vulpes vulpes,1,

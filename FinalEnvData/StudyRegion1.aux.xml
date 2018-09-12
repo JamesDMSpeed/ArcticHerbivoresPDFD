@@ -1,0 +1,13 @@
+<PAMDataset>
+  <SRS>PROJCS["North_Pole_Lambert_Azimuthal_Equal_Area_180",GEOGCS["GCS_WGS_1984",DATUM["WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["false_easting",0.0],PARAMETER["false_northing",0.0],PARAMETER["longitude_of_center",180.0],PARAMETER["latitude_of_center",90.0],UNIT["Meter",1.0]]</SRS>
+  <Metadata domain="Esri">
+    <MDI key="PyramidResamplingType">NEAREST</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Description>StudyRegion1</Description>
+    <NoDataValue>2.55000000000000E+002</NoDataValue>
+    <Metadata>
+      <MDI key="RepresentationType">THEMATIC</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>

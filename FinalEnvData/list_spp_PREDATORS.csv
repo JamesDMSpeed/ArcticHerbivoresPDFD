@@ -1,0 +1,45 @@
+Class,Order,Family,Common name,Species,HerbivoreDiversity,link to distribution map (IUCN RedList database)
+Aves,Strigiformes,Strigidae,boreal owl,Aegolius funereus,1,http://maps.iucnredlist.org/map.html?id=22689362
+Aves,Falconiformes,Accipitridae,golden eagle,Aquila chrysaetos,1,
+Aves,Strigiformes,Strigidae,short-eared owl,Asio flammeus,1,
+Aves,Strigiformes,Strigidae,Eurasian eagle-owl,Bubo bubo,1,http://maps.iucnredlist.org/map.html?id=22688927
+Aves,Strigiformes,Strigidae,snowy owl,Bubo scandiacus,1,
+Aves,Strigiformes,Strigidae,great horned owl,Bubo virginianus,1,http://maps.iucnredlist.org/map.html?id=61752071
+Aves,Falconiformes,Accipitridae,rough-legged hawk,Buteo lagopus,1,
+Aves,Falconiformes,Accipitridae,northern harrier,Circus cyaneus,1,
+Aves,Passeriformes,Corvidae,raven,Corvus corax,1,
+Aves,Falconiformes,Falconidae,Merlin,Falco columbarius,1,
+Aves,Falconiformes,Falconidae,peregrine falcon,Falco peregrinus,1,
+Aves,Falconiformes,Falconidae,gyrfalcon,Falco rusticolus,1,
+Aves,Falconiformes,Accipitridae,white-tailed eagle,Haliaeetus albicilla,1,
+Aves,Falconiformes,Accipitridae,bald eagle,Haliaeetus leucocephalus ,1,http://maps.iucnredlist.org/map.html?id=22695144
+Aves,Falconiformes,Accipitridae,Steller's Sea-eagle,Haliaeetus pelagicus,1,http://maps.iucnredlist.org/map.html?id=22695147
+Aves,Charadriiformes,Lariidae,European herring gull,Larus argentatus,0,http://maps.iucnredlist.org/map.html?id=62030608
+Aves,Charadriiformes,Lariidae,lesser black-backed gull,Larus fuscus,0,http://maps.iucnredlist.org/map.html?id=22694373
+Aves,Charadriiformes,Lariidae,glaucous gull,Larus hyperboreus,0,
+Aves,Charadriiformes,Lariidae,greater black-backed gull,Larus marinus,0,
+Aves,Charadriiformes,Lariidae,Arctic herring gull,Larus smithsonianus,0,http://maps.iucnredlist.org/map.html?id=62030590
+Aves,Charadriiformes,Lariidae,Thayer's gull,Larus thayeri,0,http://maps.iucnredlist.org/map.html?id=22728995
+Aves,Passeriformes,Corvidae,gray jay,Perisoreus canadensis,1,http://maps.iucnredlist.org/map.html?id=22705783
+Aves,Charadriiformes,Stercorariidae,long-tailed jaeger,Stercorarius longicaudus,1,
+Aves,Charadriiformes,Stercorariidae,parasitic jaeger,Stercorarius parasiticus,1,
+Aves,Charadriiformes,Stercorariidae,pomarine jaeger,Stercorarius pomarinus,1,
+Aves,Charadriiformes,Stercorariidae,great skua,Stercorarius skua,1,
+Aves,Strigiformes,Strigidae,great gray owl,Strix nebulosa,1,http://maps.iucnredlist.org/map.html?id=22689118
+Aves,Strigiformes,Strigidae,ural owl,Strix uralensis,1,http://maps.iucnredlist.org/map.html?id=22689108
+Aves,Strigiformes,Strigidae,northern hawk owl,Sturnia ulula,1,http://maps.iucnredlist.org/map.html?id=22689189
+Aves,Charadriiformes,Lariidae,Sabine's gull,Xema sabini,0,http://maps.iucnredlist.org/map.html?id=22694479
+Mammalia,Carnivora,Canidae,coyote,Canis latrans,1,
+Mammalia,Carnivora,Canidae,Gray wolf,Canis lupus,1,
+Mammalia,Carnivora,Mustelidae,Wolverine,Gulo gulo,1,
+Mammalia,Carnivora,Felidae,Canadian lynx,Lynx canadensis,1,
+Mammalia,Carnivora,Felidae,Eurasian lynx,Lynx lynx,1,
+Mammalia,Carnivora,Mustelidae,sable,Martes zibellina,1,http://maps.iucnredlist.org/map.html?id=41652
+Mammalia,Carnivora,Mustelidae,Ermine,Mustela erminea,1,
+Mammalia,Carnivora,Mustelidae,least weasel,Mustela nivalis,1,
+Mammalia,Carnivora,Mustelidae,American mink,Neovison vison,1,
+Mammalia,Carnivora,Ursidae,black bear,Ursus americanus,0,
+Mammalia,Carnivora,Ursidae,brown bear,Ursus arctos,1,
+Mammalia,Carnivora,Ursidae,polar bear,Ursus maritimus,1,http://maps.iucnredlist.org/map.html?id=22823
+Mammalia,Carnivora,Canidae,Arctic fox,Vulpes lagopus,1,
+Mammalia,Carnivora,Canidae,red fox,Vulpes vulpes,1,
