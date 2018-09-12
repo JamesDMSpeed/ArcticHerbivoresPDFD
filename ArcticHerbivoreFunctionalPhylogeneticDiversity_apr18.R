@@ -22,7 +22,7 @@ np<-SpatialPoints(cbind(0,0))
 
 # Geographic data ---------------------------------------------------------
 
-spplist<-list.files('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\RangeMaps',full.names=T)
+spplist<-list.files('RangeMaps',full.names=T)
 
 herbstack<-stack(spplist)
 herbstack
@@ -39,16 +39,10 @@ commdat<-getValues(use1)
 #Replace NA with 0
 commdat[is.na(commdat)]<-0
 
-#tiff('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\SppforSonia.tif',width=12,height=8,unit='in',res=150)
-#levelplot(use1[[c(3,7:11,15:19,21:23,69)]],scales=list(draw=F),colorkey=F)+
-#  layer(sp.polygons(allarc,col=(grey(0.5))))+
-#  layer(sp.points(np,col=1))
-#dev.off()
-
 # Environmental data ------------------------------------------------------
 
 #Environmental drivers...
-listenvvars<-list.files('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\FinalEnvData\\EnvironmentalDrivers',full.names=T)
+listenvvars<-list.files('FinalEnvData\\EnvironmentalDrivers',full.names=T)
 envvars<-stack(listenvvars)
 names(envvars)<-c('AvianPredators','MammalianPredators','TotalPredators','HerbivorePredators',
                   'NDVI','WinterMinTemp','TempRange',
@@ -56,7 +50,7 @@ names(envvars)<-c('AvianPredators','MammalianPredators','TotalPredators','Herbiv
                   'IceFreeHistory','CurrentIce','TopographicHet')
 
 
-realmsP<-readOGR('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\CMEC regions & realms','Regions')
+realmsP<-readOGR('CMEC regions & realms','Regions')
 #Correct misspecified prime meridian of realms data
 crs(realmsP)<-'+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=12 +x_0=0 +y_0=0 +datum=WGS84 +pm=0 +units=m +no_defs+ellps=WGS84 +towgs84=0,0,0'
 rl<-crop(spTransform(realmsP,crs(use1)),use1)
@@ -64,7 +58,7 @@ rl<-crop(spTransform(realmsP,crs(use1)),use1)
 #plot(allarc,add=T,col=NA,border=2)
 #realml<-rasterize(rl,use1,field='Regions')
 #plot(realml)
-#writeRaster(realml,'S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\CMEC regions & realms\\Regions.tif',overwrite=T)
+#writeRaster(realml,'CMEC regions & realms\\Regions.tif',overwrite=T)
 
 realms<-raster('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\CMEC regions & realms\\Regions.tif')
 #levelplot(realms)+
@@ -85,7 +79,7 @@ simprealm<-rasterize(crop(allarc,use1),use1,field='bioregion')
 
 #High Low sub Arctic
 #Conservation of Arctic Flora and Fauna Working Group (2010) CAFF Map No.53 - Boundaries of the geographic area covered by the Arctic Biodiversity Assessment.
-arczones<-readOGR('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\ABA-Boundaries','Arctic_Zones')
+arczones<-readOGR('ABA-Boundaries','Arctic_Zones')
 arczones_laea<-spTransform(arczones,laea)
 plot(arczones_laea,col=arczones_laea$Zone)
 arczonesR<-rasterize(arczones_laea,use1,field='Zone')
@@ -962,7 +956,7 @@ legend('topl',pch=c(1,16),col=1,c('P>=0.05','P<0.05'),cex=0.7,title='Significanc
 # Clustering --------------------------------------------------------------
 
 
-#PhyloSørensen
+#PhyloS?rensen
 require(ape)
 #Range data
 spplist<-list.files('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/RangeMaps',full.names=T)
