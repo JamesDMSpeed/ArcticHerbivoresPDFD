@@ -105,7 +105,7 @@ print(pp2, split=c(2, 1, 2, 1), more=F)
 # Phylogenetic diverstiy --------------------------------------------------
 
 #Trees
-phylogeny<-read.tree('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final phylogeny\\rooted.nwk')
+phylogeny<-read.tree('Final phylogeny\\rooted.nwk')
 plot(phylogeny)
 phylogeny$tip.label
 
@@ -118,7 +118,7 @@ phylo2$edge.length<-phylogeny$edge.length/sum(phylogeny$edge.length)
 #Use picante to trim community and phylogenetic data
 phydata<-match.phylo.comm(phylo2,commdat)
 
-write.tree(phydata$phy,file='S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final phylogeny\\rooted_trimeed.nwk')
+write.tree(phydata$phy,file='Final phylogeny\\rooted_trimeed.nwk')
 #PD & SR
 phydiv<-pd(phydata$comm,phydata$phy,include.root=T)
 
@@ -183,7 +183,7 @@ levelplot(pdesras,at=breaks,col.regions=cols,margin=F)
 # Functional diversity ----------------------------------------------------
 
 #FD
-functree<-read.tree('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final trait classification\\arcticherbivorefunctiontree_apr18.nwk')
+functree<-read.tree('Final trait classification\\arcticherbivorefunctiontree_apr18.nwk')
 plot(functree)
 #Adjusting name to match phylogeny and range map
 #Check tip label first
