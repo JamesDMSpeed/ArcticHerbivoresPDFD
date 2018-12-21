@@ -694,6 +694,9 @@ globmodgls_sr<-gls(Species.richness~NDVI+WinterMinTemp+
                      HabitatHet+TopographicHet+
                      IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
                    correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_sr$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldf)
+varioSR<-Variogram(globmodgls_sr,resType='normalized')
+plot(varioSR,main='Species richness')
+write.table(varioSR,'Variogram_SR.txt')
 
 modsetcor_sr<-dredge(globmodgls_sr,trace=2)
 modselcor_sr<-model.sel(modsetcor_sr)
@@ -714,6 +717,11 @@ globmodgls_pd<-gls(Phylogenetic.diversity~NDVI+WinterMinTemp+
                      HabitatHet+TopographicHet+
                      IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
                    correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_pd$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldf)
+
+
+varioPD<- Variogram(globmodgls_pd,resType = 'normalized')
+plot(varioPD,main='Phylogenetic diversity')
+write.table(varioPD,'Variogram_PD.txt')
 
 modsetcor_pd<-dredge(globmodgls_pd,trace=2)
 modselcor_pd<-model.sel(modsetcor_pd)
@@ -736,6 +744,10 @@ globmodgls_fd<-gls(Functional.diversity~NDVI+WinterMinTemp+
                      IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
                    correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fd$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldf)
 
+varioFD<- Variogram(globmodgls_fd,resType = 'normalized')
+plot(varioFD,main='Functional diversity')
+write.table(varioFD,'Variogram_FD.txt')
+
 modsetcor_fd<-dredge(globmodgls_fd,trace=2)
 modselcor_fd<-model.sel(modsetcor_fd)
 modavgcor_fd<-model.avg(modselcor_fd)
@@ -756,6 +768,10 @@ globmodgls_fdpd<-gls(Functional.Phylognetic.diversity~NDVI+WinterMinTemp+
                        IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
                      correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fdpd$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldf)
 
+varioFDPD<- Variogram(globmodgls_fdpd,resType = 'normalized')
+plot(varioFDPD,main='Functional convergence')
+write.table(varioFDPD,'Variogram_FDPD.txt')
+
 modsetcor_fdpd<-dredge(globmodgls_fdpd,trace=2)
 modselcor_fdpd<-model.sel(modsetcor_fdpd)
 modavgcor_fdpd<-model.avg(modselcor_fdpd)
@@ -765,7 +781,17 @@ write.table(importance(modavgcor_fdpd),'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018
 write.table(summary(modavgcor_fdpd)$coefmat.full,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd.txt')
 write.table(summary(modavgcor_fdpd)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_fdpd.txt')
 
-
+#Variograms
+tiff('PhylogeneticFunctionalAnalysisPicanteR/Variograms.tif',width=5,height=5,units='in',res=150)
+V1<-plot(varioSR,main='Species richness',xlim=c(0,5000000),ylim=c(0,1.3))
+V2<-plot(varioPD,main='Phylogenetic diversity',xlim=c(0,5000000),ylim=c(0,1.3))
+V3<-plot(varioFD,main='Functional diversity',xlim=c(0,5000000),ylim=c(0,1.3))
+V4<-plot(varioFDPD,main='Functional convergence',xlim=c(0,5000000),ylim=c(0,1.3))
+print(V1, split=c(1, 1, 2, 2), more=TRUE)
+print(V2, split=c(2, 1, 2, 2), more=TRUE)
+print(V3, split=c(1, 2, 2, 2), more=TRUE)
+print(V4, split=c(2, 2, 2, 2))
+dev.off()
 
 #Effect size - use only cells with SR >1
 modeldf_es<-modeldf[!is.na(modeldf$Phylogenetic.diversity_es),]
