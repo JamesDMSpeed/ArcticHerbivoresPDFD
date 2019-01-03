@@ -428,13 +428,14 @@ my.at <- seq(0, 1, by = 0.1)
 levelplot(divstack2,at=my.at,par.settings=YlOrRdTheme())
 quantile(divstack2)
 
+divstack2$Functional.convergence<-1-divstack2$Functional.divergence
 writeRaster(divstack2,'PhylogeneticFunctionalAnalysisPicanteR/DiversityPatterns/ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(divstack2))  
 
 divstackll<-projectRaster(divstack2,crs='+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0' )
 KML(divstackll,'PhylogeneticFunctionalAnalysisPicanteR/Divstacks')
 
-tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps_apr18.tif',width = 6,height=6,units='in',res=300)
-pdf('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps_apr18.pdf',width = 6,height=6,pointsize=8)
+tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps.tif',width = 6,height=6,units='in',res=300)
+#pdf('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps_apr18.pdf',width = 6,height=6,pointsize=8)
 
 p1 <- levelplot(divstack2[[1]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Species richness',cex=0.8))+
   layer(sp.points(np,col=1))+
@@ -450,7 +451,7 @@ p2 <- levelplot(divstack2[[2]], at=my.at, par.settings=YlOrRdTheme(layout.height
 p3 <- levelplot(divstack2[[3]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Functional diversity',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-p4 <- levelplot(divstack2[[4]], par.settings=BTCTheme(region=rev(BTC(9)),layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Functional divergence',cex=0.8))+
+p4 <- levelplot(divstack2[[5]], par.settings=BTCTheme(region=rev(BTC(9)),layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Functional convergence',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
 
@@ -505,6 +506,9 @@ dev.off()
 effsizestack<-stack('PhylogeneticFunctionalAnalysisPicanteR/EffectSizesStack')
 names(effsizestack)<-c('Phylogenetic diversity_es','Functional diversity_es','Functional divergence_es')
 effsizestack<-mask(effsizestack,envvars1$CurrentIce,maskvalue=1)
+
+
+effsizestack$Functional.convergence_es<-1-effsizestack$Functional.divergence_es
 writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR/DiversityPatterns/ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(effsizestack))
 
 pes<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional/Phylogenetic diversity'),main='Standardised effect sizes')
@@ -533,10 +537,11 @@ a[a<0.025]<-0
 rsig[[i]]<-rasterToPolygons(a,dissolve=T)
 }
 
+
 tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityEffectSizeMaps_apr18.tif',width = 8,height=3,units='in',res=300)
 p.strip <- list(cex=0.8)
 #effsigplot<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional dispersion'),main='Standardised effect sizes', par.strip.text=p.strip)+
-effsigplot<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional divergence'),main='', par.strip.text=p.strip)+
+effsigplot<-levelplot(effsizestack[[c(1,2,4)]],scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional convergence'),main='', par.strip.text=p.strip)#+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))+
     layer(sp.polygons(rsig[[panel.number()]],col='black'))+
   layer(sp.points(np,col=1))
