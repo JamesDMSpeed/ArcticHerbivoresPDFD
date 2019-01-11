@@ -113,7 +113,7 @@ phylogeny$tip.label[which(!phylogeny$tip.label%in%names(use1))]
 
 #Standardise edge lengths
 phylo2<-phylogeny
-phylo2$edge.length<-phylogeny$edge.length/sum(phylogeny$edge.length)
+#phylo2$edge.length<-phylogeny$edge.length/sum(phylogeny$edge.length)
 
 #Use picante to trim community and phylogenetic data
 phydata<-match.phylo.comm(phylo2,commdat)
@@ -189,7 +189,7 @@ plot(functree)
 #Check tip label first
 functree$tip.label[which(functree$tip.label=='Urocitellus_parryii')]<-'Spermophilus_parryii'
 functree2<-functree
-functree2$edge.length<-functree$edge.length/sum(functree$edge.length)
+#functree2$edge.length<-functree$edge.length/sum(functree$edge.length)
 
 funcdata<-match.phylo.comm(functree2,commdat)
 
@@ -214,7 +214,7 @@ fdesras<-mask(fdesras,sr_geo,maskvalue=0)
 levelplot(fdesras,at=breaks,col.regions=cols,margin=F)
 
 # Ratio FD:PD -------------------------------------------------------------
-dfdat<-data.frame(realm=getValues(realms),sr_p=getValues(sr_p),pd_p=getValues(pd_p),fd_p=getValues(fd_p))
+dfdat<-data.frame(realm=getValues(realms),sr=getValues(srras),pd=getValues(pdras),fd=getValues(fdras),sr_p=getValues(sr_p),pd_p=getValues(pd_p),fd_p=getValues(fd_p))
 dfdatstack<-stack(realms,divstack2)
 dfdat1<-rasterToPoints(dfdatstack)
 #write.csv(dfdat1,'PhylogeneticFunctionalAnalysisPicanteR/DiversitywithCoords.csv')
@@ -236,7 +236,7 @@ with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(sr_p,fd_p,pch=16,cex=0.7,col=
 with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(sr_p,fd_p,pch=17,cex=0.7,col=colx[3]))
 abline(0,1)
 mtext(side=3,adj=0,'(b)',line=0.5,cex=1)
-plot(pd_p,fd_p,xlab='Phylogenetic diversity \n (proportion of total)',ylab='Functional diversity \n (proportion of total)',las=1,xlim=c(0,0.75),ylim=c(0,1),type='n')
+with(dfdat,plot(pd_p,fd_p,xlab='Phylogenetic diversity \n (proportion of total)',ylab='Functional diversity \n (proportion of total)',las=1,xlim=c(0,0.75),ylim=c(0,1),type='n'))
 with(dfdat[dfdat$realm==3 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=15,cex=0.7,col=colx[1]))
 with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=16,cex=0.7,col=colx[2]))
 with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=17,cex=0.7,col=colx[3]))
@@ -260,8 +260,7 @@ mtext(side=3,adj=0,'(f)',line=0.5,cex=1)
 dev.off()
 }
 
-
-tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityRatios_4pan.tif',res=150,width=6,height=6,units='in')
+tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityRatios_4pan_R1.tif',res=150,width=6,height=6,units='in')
 {
   colx<-brewer.pal(3, 'YlOrRd')
   par(mfrow=c(2,2))
@@ -284,14 +283,24 @@ tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityRatios_4pan.tif',res=150,w
   with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=17,cex=0.7,col=colx[3]))
   abline(0,1)
   mtext(side=3,adj=0,'(c)',line=0.5,cex=1)
-  plot(sr_p*70,fd_p/pd_p,xlab='Species richness',ylab='Functional divergence',las=1,ylim=c(0,5),type='n')
-  with(dfdat[dfdat$realm==3 & dfdat$sr_p>0,],points(sr_p*70,fd_p/pd_p,pch=15,cex=0.7,col=colx[1]))
-  with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(sr_p*70,fd_p/pd_p,pch=16,cex=0.7,col=colx[2]))
-  with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(sr_p*70,fd_p/pd_p,pch=17,cex=0.7,col=colx[3]))
-  legend('topr',pch=c(15,16,17),pt.cex=1,col=c(colx[1],colx[2],colx[3]),c('Arctico-Siberian','North American','Eurasian'))
+  plot(sr_p*70,(1-fd_p/pd_p),xlab='Species richness',ylab='Functional convergence',las=1,ylim=c(-5,0),type='n')
+  with(dfdat[dfdat$realm==3 & dfdat$sr_p>0,],points(sr_p*70,(1-fd_p/pd_p),pch=15,cex=0.7,col=colx[1]))
+  with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(sr_p*70,(1-fd_p/pd_p),pch=16,cex=0.7,col=colx[2]))
+  with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(sr_p*70,(1-fd_p/pd_p),pch=17,cex=0.7,col=colx[3]))
+  legend('bottomr',pch=c(15,16,17),pt.cex=1,col=c(colx[1],colx[2],colx[3]),c('Arctico-Siberian','North American','Eurasian'))
       mtext(side=3,adj=0,'(d)',line=0.5,cex=1)
     dev.off()
 }
+
+#Different scaling
+par(mfrow=c(2,3))
+plot(dfdat$pd,dfdat$fd,main='Raw')
+plot(dfdat$pd_p,dfdat$fd_p,main='Standardised by total \nbranch length')
+plot(scale(dfdat$pd),scale(dfdat$fd),main='Centered and scaled')
+plot(dfdat$sr,(1-dfdat$fd/dfdat$pd))
+plot(dfdat$sr,(1-dfdat$fd_p/dfdat$pd_p))
+plot(dfdat$sr,1-(scale(dfdat$fd)/(scale(dfdat$pd))))
+
 
 #Models
 with(dfdat[dfdat$realm!=9,],summary(step(lm(pd_p~sr_p*as.factor(realm)))))
@@ -335,7 +344,7 @@ with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(fd_p,fd_p/pd_p,pch=17,cex=0.7,
 
 
 
-#Function to do it hacked from picante
+#Function to do FDPD hacked from picante ####
 pdtreeratio<-function(samp,tree,tree2,runs=999,iterations=1000) #For taxa.labels null model
 {pd.obs <- as.vector(pd(samp, tree)$PD)/sum(tree$edge.length)
 pd.rand<-t(replicate(runs,as.vector(pd(samp, tipShuffle(tree2))$PD)/sum(tree2$edge.length)))
@@ -389,7 +398,111 @@ fdpdras<-raster(use1)
 fdpdras<-mask(setValues(fdpdras,fdpd$fdpd.obs.z),sr_geo,maskvalue=0)
 levelplot(fdpdras,par.settings=YlOrRdTheme,scales=list(draw=FALSE),margin=F,main='FD:PD')
 
+
+
+# Logistic relationship FDPD ----------------------------------------------
+df2<-dfdat
+df2$pd_p[df2$sr<1]<-NA
+lmFDPD<-with(df2,lm(fd_p~log(pd_p)))
+summary(lmFDPD)
+newdat<-data.frame(pd_p=seq(min(df2$pd_p,na.rm=T),max(df2$pd_p,na.rm=T),by=0.01))
+newdatpreds<-predict(lmFDPD,newdat,type='response',interval='c',level=0.99)
+logfdpd<-cbind(newdat,newdatpreds)
+
+with(dfdat,plot(pd_p,fd_p,xlab='Phylogenetic diversity \n (proportion of total)',ylab='Functional diversity \n (proportion of total)',las=1,xlim=c(0,0.75),ylim=c(0,1),type='n'))
+with(dfdat[dfdat$realm==3 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=15,cex=0.7,col=colx[1]))
+with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=16,cex=0.7,col=colx[2]))
+with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=17,cex=0.7,col=colx[3]))
+lines(logfdpd$pd_p,logfdpd$fit)
+lines(logfdpd$pd_p,logfdpd$lwr,lty=2)
+lines(logfdpd$pd_p,logfdpd$upr,lty=2)
+
+
+#Model with all raster cells
+summary(lmFDPD)
+func_con<-residuals(lmFDPD)
+
+#divstack2$FuncPhy_logmod<-divstack2$Phylogenetic.diversity
+#divstack2$FuncPhy_logmod[!is.na(divstack2$Phylogenetic.diversity)]<-func_con
+
+func_con_ras<-fdras
+func_con_ras[pdras>0 & srras>1]<-func_con
+func_con_ras[srras<2]<-NA
+func_conras<-mask(func_con_ras,extend(envvars$CurrentIce,pd_p),maskvalue=1,updatevalue=NA)
+plot(func_conras)
+lp1<-levelplot(func_conras,main='FC',margin=F)
+diverge0(lp1,'RdBu')
+
+
+#Randomize matrix
+matlayers<-1000
+rm1<-array(dim=c(nrow(phydata$comm),ncol(phydata$comm),matlayers))
+for(i in 1:matlayers){
+rm1[,,i]<-randomizeMatrix(phydata$comm,null.model='richness')}
+dimnames(rm1)[[2]]<-colnames(phydata$comm)
+pdmat<-matrix(nrow=dim(rm1)[1],ncol=matlayers)
+fdmat<-matrix(nrow=dim(rm1)[1],ncol=matlayers)
+for(i in 1:matlayers){
+pdmat[,i]<-  pd(rm1[,,i],phydata$phy)$PD/sum(phydata$phy$edge.length)
+fdmat[,i]<-  pd(rm1[,,i],funcdata$phy)$PD/sum(funcdata$phy$edge.length)
+}
+
+dfRand<-data.frame(pdrand=apply(pdmat,1,mean),fdrand=apply(fdmat,1,mean))
+lmRand<-with(dfRand[dfRand$pdrand>0,],lm(fdrand~log(pdrand)))
+with(dfRand[dfRand$pdrand>0,],plot(pdrand,fdrand,pch=16))
+with(dfdat[dfdat$realm==3 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=15,cex=0.7,col=colx[1]))
+with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=16,cex=0.7,col=colx[2]))
+with(dfdat[dfdat$realm==6 & dfdat$sr_p>0,],points(pd_p,fd_p,pch=17,cex=0.7,col=colx[3]))
+nd1<-data.frame(pdrand=seq(min(dfRand$pdrand[dfRand$pdrand>0]),max(dfRand$pdrand),by=0.001))
+pd1<-as.data.frame(predict(lmRand,nd1,type='response',interval='p'))
+lines(nd1$pdrand,pd1$fit)
+lines(nd1$pdrand,pd1$upr,lty=2)
+lines(nd1$pdrand,pd1$lwr,lty=2)
+
+#Effect size 
+#Obs-mean.rand/se.rand
+resi<-matrix(nrow=1581,ncol=matlayers)
+for (i in 1:matlayers){
+  lmi<-lm(fdmat[,i][pdmat[,i]>0]~log(pdmat[,i][pdmat[,1]>0]))
+  resi[,i]<-residuals(lmi)
+}
+meanresid<-apply(resi,1,mean)
+sdresid<-apply(resi,1,sd)
+zresid<-(residuals(lmFDPD)-meanresid)/sdresid
+rankresid <- apply(X = cbind(residuals(lmFDPD), resi), MARGIN = 1, 
+                     FUN = rank)[1, ]
+p_resid<-rankresid/(matlayers+1)
+p_resid[p_resid>0.975]
+p_resid[p_resid<0.025]
+
+funccon_es<-fdras
+funccon_es[srras>0]<-zresid
+funccon_es[srras==0]<-NA
+funccon_es<-mask(funccon_es,extend(envvars$CurrentIce,pd_p),maskvalue=1,updatevalue=NA)
+
+lpfces<-levelplot(funccon_es,margin=F)
+diverge0(lpfces,'RdBu')
+
+rsigfunccon<-fdras
+rsigfunccon[srras>0]<-p_resid
+rsigfunccon[srras==0]<-NA
+rsigfunccon<-mask(rsigfunccon,extend(envvars$CurrentIce,pd_p),maskvalue=1,updatevalue=NA)
+a<-rsigfunccon
+a[a<0.975 & a>0.025]<-NA
+a[a>0.975]<-1
+a[a<0.025]<-0
+rsigfuncconcells<-rasterToPolygons(a,dissolve=T)
+
+lpfces<-levelplot(funccon_es,margin=F)+
+ layer( sp.polygons(rsigfuncconcells))
+diverge0(lpfces,'RdBu')
+
+writeRaster(funccon_es,'logFuncDivEffSize.tif')
+writeRaster(func_conras,'logFuncDiv.tif')
+
+
 # Stacks ------------------------------------------------------------------
+
 
 #Diverge function for colouring plots centered on 0
 diverge0 <- function(p, ramp) {
@@ -418,25 +531,24 @@ levelplot(divstack,par.settings=YlOrRdTheme,scales=list(draw=FALSE))#+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,col='grey',lwd=0.5))
 
-#divstack2<-stack(sr_p,pd_p,fd_p,fd_p/pd_p)
-#divstack2m<-mask(divstack2,sr_geo)
+#divstack2<-stack(sr_p,pd_p,fd_p,0-func_conras)
+#names(divstack2)<-c('Species richness','Phylogenetic diversity','Functional diversity','Functional convergence')
+#divstack2<-mask(divstack2,sr_geo)
+#divstack2m<-mask(divstack2,extend(envvars$CurrentIce,divstack2),maskvalue=1,updatevalue=NA)
+#plot(divstack2m)
 #writeRaster(divstack2m,'PhylogeneticFunctionalAnalysisPicanteR/DiversityStack')
 divstack2<-stack('PhylogeneticFunctionalAnalysisPicanteR/DiversityStack')
-divstack2<-mask(divstack2,extend(envvars$CurrentIce,divstack2),maskvalue=1,updatevalue=NA)
-names(divstack2)<-c('Species richness','Phylogenetic diversity','Functional diversity','Functional divergence')
+
 my.at <- seq(0, 1, by = 0.1)
 levelplot(divstack2,at=my.at,par.settings=YlOrRdTheme())
 quantile(divstack2)
 
-divstack2$Functional.convergence<-1-divstack2$Functional.divergence
 writeRaster(divstack2,'PhylogeneticFunctionalAnalysisPicanteR/DiversityPatterns/ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(divstack2))  
 
 divstackll<-projectRaster(divstack2,crs='+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0' )
 KML(divstackll,'PhylogeneticFunctionalAnalysisPicanteR/Divstacks')
 
-tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps.tif',width = 6,height=6,units='in',res=300)
-#pdf('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps_apr18.pdf',width = 6,height=6,pointsize=8)
-
+tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps_R1.tif',width = 6,height=6,units='in',res=300)
 p1 <- levelplot(divstack2[[1]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Species richness',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))+
@@ -451,69 +563,27 @@ p2 <- levelplot(divstack2[[2]], at=my.at, par.settings=YlOrRdTheme(layout.height
 p3 <- levelplot(divstack2[[3]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Functional diversity',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-p4 <- levelplot(divstack2[[5]], par.settings=BTCTheme(region=rev(BTC(9)),layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Functional convergence',cex=0.8))+
+p4 <- levelplot(divstack2[[4]],par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Functional convergence',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
 
   print(p1, split=c(1, 1, 2, 2), more=TRUE)
   print(p2, split=c(2, 1, 2, 2), more=TRUE)
   print(p3, split=c(1, 2, 2, 2), more=TRUE)
-  print(p4, split=c(2, 2, 2, 2))
+  print(diverge0(p4,'RdBu'), split=c(2, 2, 2, 2))
 dev.off()    
 
-#bitmap('PhylogeneticFunctionalAnalysisPicanteR/DiversityMaps_apr18.ps', 
-#       type = "tiff24nc", height = 5, width = 8, res = 300, units = "in")
-
-
-#Include zones and boundaries
-# divstack3<-stack(divstack2,arczonesrat,realmsrat)
-# 
-# p1 <- levelplot(divstack3[[1]], at=my.at,par.settings=YlOrRdTheme(),scales=list(draw=FALSE), margin=FALSE,main=list('Species richness',cex=0.8))+
-#   layer(sp.points(np,col=1))+
-#   layer(sp.polygons(rl,lwd=0.4,col='blue'))+
-#   layer(sp.polygons(arczones_laea,lwd=0.4,lty=2,col='black'))+
-#   layer(panel.text(-2500000,-1800000,'AS',col='blue'))+ 
-# layer(panel.text(-1500000, 2500000,'EUR',col='blue')) +
-# layer(panel.text( 2500000,-1800000,'NA',col='blue')) 
-# print(p1)  
-# layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-# p2 <- levelplot(divstack3[[2]], at=my.at, par.settings=YlOrRdTheme(),scales=list(draw=FALSE), margin=FALSE,main=list('Phylogenetic diversity',cex=0.8))#+
-#   layer(sp.points(np,col=1))+
-#   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-# p3 <- levelplot(divstack3[[3]], at=my.at, par.settings=YlOrRdTheme(),scales=list(draw=FALSE), margin=FALSE,main=list('Functional diversity',cex=0.8))#+
-#   layer(sp.points(np,col=1))+
-#   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-# p4 <- levelplot(divstack3[[4]], between=list(0,0), par.settings=BTCTheme(region=rev(BTC(9))),colorkey=list(length=3),scales=list(draw=FALSE), margin=FALSE,main=list('Functional divergence',cex=0.8))#+
-#   layer(sp.points(np,col=1))+
-#   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-# p5<-levelplot(realmsrat,scales=list(draw=FALSE),margin=F,colorkey=list(height=1,side=1),main=list('Zoogeographic regions',cex=0.8),col.regions=c( 'aquamarine3', 'seagreen1','cyan2'))#+
-#   layer(sp.polygons(allarc,add=T,lwd=0.5,col=grey(0.5)))+
-#   layer(sp.points(np,col=1))
-# p6<-levelplot(arczonesrat,scales=list(draw=FALSE),colorkey=list(height=1),margin=F,main=list('Arctic boundaries',cex=0.8),col.regions=c( 'orchid4', 'orchid3','plum1'))#+
-#   layer(sp.polygons(allarc,add=T,lwd=0.5,col=grey(0.5)))+
-#   layer(sp.points(np,col=1))
-# 
-# print(p6, split=c(1, 1, 2, 3), more=TRUE)
-# print(p5, split=c(2, 1, 2, 3), more=TRUE)
-# print(p1, split=c(1, 2, 2, 3), more=TRUE)
-# print(p2, split=c(2, 2, 2, 3), more=TRUE)
-# print(p3, split=c(1, 3, 2, 3), more=TRUE)
-# print(p4, split=c(2, 3, 2, 3), more=F)
 
 #Effect sizes and randomisation tests
-#effsizestack<-stack(setValues(r1,pd_es$pd.obs.z),setValues(r1,fd_es$pd.obs.z),setValues(r1,fdpdnotsingle$fdpd.obs.z))
+#effsizestack<-stack(setValues(r1,pd_es$pd.obs.z),setValues(r1,fd_es$pd.obs.z),0-funccon_es)
 #writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR/EffectSizesStack')
 effsizestack<-stack('PhylogeneticFunctionalAnalysisPicanteR/EffectSizesStack')
-names(effsizestack)<-c('Phylogenetic diversity_es','Functional diversity_es','Functional divergence_es')
+names(effsizestack)<-c('Phylogenetic diversity_es','Functional diversity_es','Functional convergence_es')
 effsizestack<-mask(effsizestack,envvars1$CurrentIce,maskvalue=1)
 
-
-effsizestack$Functional.convergence_es<-1-effsizestack$Functional.divergence_es
 writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR/DiversityPatterns/ArcticHerbivore',format='GTiff',bylayer=T,suffix=names(effsizestack))
 
-pes<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional/Phylogenetic diversity'),main='Standardised effect sizes')
-diverge0(pes,'RdBu')
-#randomstack<-stack(pdesras,fdesras,setValues(r1,fdpdnotsingle$fdpd.obs.p))
+#randomstack<-stack(pdesras,fdesras,rsigfunccon)
 #randomstackm<-mask(randomstack,sr_geo)
 #writeRaster(randomstackm,'PhylogeneticFunctionalAnalysisPicanteR/RandomStack')
 randomstack<-stack('PhylogeneticFunctionalAnalysisPicanteR/RandomStack')
@@ -538,11 +608,10 @@ rsig[[i]]<-rasterToPolygons(a,dissolve=T)
 }
 
 
-tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityEffectSizeMaps_apr18.tif',width = 8,height=3,units='in',res=300)
+tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityEffectSizeMaps_R1.tif',width = 8,height=3,units='in',res=300)
 p.strip <- list(cex=0.8)
-#effsigplot<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional dispersion'),main='Standardised effect sizes', par.strip.text=p.strip)+
-effsigplot<-levelplot(effsizestack[[c(1,2,4)]],scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional convergence'),main='', par.strip.text=p.strip)#+
-  layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))+
+effsigplot<-levelplot(effsizestack,scales=list(draw=FALSE),names.attr=c('Phylogenetic diversity','Functional diversity','Functional convergence'),main='', par.strip.text=p.strip)+
+ # layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))+
     layer(sp.polygons(rsig[[panel.number()]],col='black'))+
   layer(sp.points(np,col=1))
 diverge0(effsigplot,'RdBu')
@@ -563,7 +632,7 @@ summary(effsizestack$Functional.divergence_es[randomstack$layer.3>0.975 & (realm
 pairs(envvars[[c(4,5,6,10,11,13)]])
 envvars1<-extend(envvars,divstack2)
 alllayers<-stack(divstack2,effsizestack,randomstack,realms,envvars1,arczonesR)
-names(alllayers)[25]<-'ArcticZone'
+names(alllayers)[27]<-'ArcticZone'
 alldata<-extract(alllayers,rasterToPoints(divstack2$Species.richness,spatial=T),sp=T)
 alldatadf<-cbind(alldata@coords,alldata@data)
 alldatadf$HerbivorePredators_R<-resid(lm(alldatadf$HerbivorePredators~alldatadf$NDVI))  
@@ -584,6 +653,7 @@ panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
   if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
   text(0.5, 0.5, txt, cex = cex.cor * r)
 }
+
 tiff('PhylogeneticFunctionalAnalysisPicanteR/EnvVarsPairs.tif',res=150,width=7,height=7,units='in')
 pairs(alldatadf[,c(19,18,20,24,27,25)],upper.panel=panel.cor
       ,labels=c('Vegetation \nproductivity (NDVI)','Predator \n richness','Winter minimum\n temperature (x10)','Habitat \n heterogeneity','Topographic \n heterogeneity','Ice free period'))
@@ -654,6 +724,7 @@ pairs(fulldf[,c(4,5,6,7,19,18,20,24,27,25)],upper.panel=panel.cor
 
 
 standdf<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/standardised_analysisdataframe.txt')
+standdf<-read.table('PhylogeneticFunctionalAnalysisPicanteR/standardised_analysisdataframe.txt')
 
 
 modeldf<-standdf[!is.na(standdf$TopographicHet) & !is.na(standdf$Regions),]
@@ -763,12 +834,12 @@ write.table(summary(modavgcor_fd)$coefmat.full,'~/DISENTANGLE/WP3/Arctic/Analysi
 write.table(summary(modavgcor_fd)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_fd.txt')
 
 #FDPD
-fullgls_fdpd<-gls(Functional.Phylognetic.diversity~NDVI+WinterMinTemp+
+fullgls_fdpd<-gls((1-Functional.Phylognetic.diversity)~NDVI+WinterMinTemp+
                     HabitatHet+TopographicHet+
                     IceFreeHistory+
                     HerbivorePredators_R + as.factor(Regions),correlation=corExp(form=~x+y, nugget=T), method="ML",data=modeldf)
 
-globmodgls_fdpd<-gls(Functional.Phylognetic.diversity~NDVI+WinterMinTemp+
+globmodgls_fdpd<-gls((1-Functional.Phylognetic.diversity)~NDVI+WinterMinTemp+
                        HabitatHet+TopographicHet+
                        IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
                      correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fdpd$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldf)
@@ -786,7 +857,7 @@ write.table(importance(modavgcor_fdpd),'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018
 write.table(summary(modavgcor_fdpd)$coefmat.full,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd.txt')
 write.table(summary(modavgcor_fdpd)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_fdpd.txt')
 
-#Variograms
+#Variograms plot
 tiff('PhylogeneticFunctionalAnalysisPicanteR/Variograms.tif',width=5,height=5,units='in',res=150)
 V1<-plot(varioSR,main='Species richness',xlim=c(0,5000000),ylim=c(0,1.3))
 V2<-plot(varioPD,main='Phylogenetic diversity',xlim=c(0,5000000),ylim=c(0,1.3))
@@ -798,7 +869,7 @@ print(V3, split=c(1, 2, 2, 2), more=TRUE)
 print(V4, split=c(2, 2, 2, 2))
 dev.off()
 
-#Effect size - use only cells with SR >1
+#Effect size - use only cells with SR >1 ####
 modeldf_es<-modeldf[!is.na(modeldf$Phylogenetic.diversity_es),]
 #PD_ES
 fullgls_pdes<-gls(Phylogenetic.diversity_es~NDVI+WinterMinTemp+
@@ -881,30 +952,67 @@ rownames(impdiv1)<-rownames(isr)[order(rownames(isr))]
 impdiv1
 impdivsort<-impdiv1[order(-impdiv1[,1]),]
 rownames(impdivsort)<-(c('NDVI','Predator diversity (R)','Topographic heterogeneity','Habitat heterogeneity','Ice-free history','Winter minimum temperature','Zoogeographic region (F)'))
-
- m1<-merge(t(isr),t(ipd),all=T)
- m2<-merge(m1,t(ifd),all=T)
- m3<-merge(m2,t(ifdpd),all=T)
-# 
- impdiv<-t(m3)
- impdiv<-impdiv[order(-rowSums(impdiv[,1])),]
- impdiv<-impdiv[order(-impdiv[,1]),]
- colnames(impdiv)<-c('FDPD','FD','PD','SR')
-# 
- impdiv<-impdiv[,ncol(impdiv):1]
-colsImp<-c(grey(0.8),'orange','blue','pink4')
+impdivsortx<-impdivsort[c(2,1,4,3,6,5,7),]
 colsImp<-brewer.pal(5,'Blues')[2:5]
 par(mar=c(5,12,1,1))
-barplot(t(as.matrix(impdivsort)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
-        ,beside=T,legend.text=T,args.legend=list(y=nrow(impdiv)-5,x=-0.05,title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional:Phylogenetic'))))
+barplot(t(as.matrix(impdivsortx)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
+        ,beside=T,legend.text=T,args.legend=list(y=nrow(impdivsortx)-5,x=-0.05,title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional:Phylogenetic'))))
 
-tiff('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/DivImportance.tif',res=300,units='in',width=6,height=6)
-par(mar=c(5,12,1,1))
-barplot(t(as.matrix(impdiv)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
-        ,beside=T,legend.text=T,args.legend=list(y=nrow(impdiv)-5,x=-0.05,title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional:Phylogenetic'))))
+
+#Model averaged coefficients
+#Diversity 
+#Full coefficents
+fullcoefsr<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_sr.txt')
+fullcoefpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_pd.txt')
+fullcoeffd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fd.txt')
+fullcoeffdpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd.txt')
+#Reorder rows
+fullcoefsr1<-fullcoefsr[order(rownames(fullcoefsr)),]
+fullcoefpd1<-fullcoefpd[order(rownames(fullcoefpd)),]
+fullcoeffd1<-fullcoeffd[order(rownames(fullcoeffd)),]
+fullcoeffdpd1<-fullcoeffdpd[order(rownames(fullcoeffdpd)),]
+
+macplot_est<-rbind(SR=fullcoefsr1[,1],PD=fullcoefpd1[,1],FD=fullcoeffd1[,1],FDPD=fullcoeffdpd1[,1])
+colnames(macplot_est)<-rownames(fullcoefsr1)
+macplot_est<-macplot_est[,c(6,4,7,3,8,9,5,2,3)]
+colnames(macplot_est)<-c('Intercept','Predator diversity (R)','NDVI','Habitat heterogeneity','Topographic heterogeneity','Winter minimum temperature','Ice-free history','Region:Eur vs. Arc','Region: NA vs. Arc')
+macplot_se<-rbind(SR=fullcoefsr1[,2],PD=fullcoefpd1[,2],FD=fullcoeffd1[,2],FDPD=fullcoeffdpd1[,2])
+macplot_se<-macplot_se[,c(6,4,7,3,8,9,5,2,3)]
+macplot_p<-rbind(SR=fullcoefsr1[,5],PD=fullcoefpd1[,5],FD=fullcoeffd1[,5],FDPD=fullcoeffdpd1[,5])
+macplot_p<-macplot_p[,c(6,4,7,3,8,9,5,2,3)]
+macplot_p[macplot_p>=0.05]<-1
+macplot_p[macplot_p<0.05]<-16
+
+
+tiff('PhylogeneticFunctionalAnalysisPicanteR/VarImpModAvgCoef.tif',width = 8,height=5,units='in',res=150,pointsize=8)
+par(mfrow=c(1,2))
+par(mar=c(5,13,1,1))
+#Imp
+#bI<-barplot(cbind(t(as.matrix(impdivsortx)),rep(NA,times=4)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
+#        ,beside=T,legend.text=T,args.legend=list(cex=0.9,'topr',title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional divergence'))))
+bI<-barplot(cbind(t(as.matrix(impdivsortx)),rep(NA,times=4)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
+            ,beside=T,legend.text=T,args.legend=list(cex=0.9,'topr',title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional convergence'))),
+            names.arg=c('Predator diversity (R)','Vegetation productivity \n (NDVI)','Habitat heterogeneity','Topographic heterogeneity','Climatic severity \n (winter minimum temperature)',
+                        'Landscape history \n (time since glaciation)','Zoogeographic region (F)',''))
+par(mar=c(5,2,1,1))
+par(xpd=T)
+bI1<-barplot(cbind(t(as.matrix(impdivsortx)),rep(NA,times=4)), horiz=T,beside=T,xlim=c(-0.58,0.5),col=F,border=F,
+             xlab='Model averaged coefficients',las=1,names.arg=rep(NA,times=8))#,names.arg=colnames(macplot_est[,2:ncol(macplot_est)]))
+#names.arg=c(rep(NA,times=6),colnames(macplot_est[,2:ncol(macplot_est)])[7:8]))
+points(macplot_est[,2:ncol(macplot_est)],bI1,pch=macplot_p[,2:ncol(macplot_p)],col=colsImp,lwd=2,cex=1.5) #col=c('black','orange','blue','pink4')) 
+arrows(macplot_est[,2:ncol(macplot_est)]+1.96*macplot_se[,2:ncol(macplot_est)],bI1,
+       macplot_est[,2:ncol(macplot_est)]-1.96*macplot_se[,2:ncol(macplot_est)],bI1,
+       angle=90,length=0.05,code=3,col=colsImp)#,col=c('black','orange','blue','pink4'))
+#legend('topr',pch=c(1,16),col=colsImp[4],c('P>=0.05','P<0.05'),title='Significance',pt.cex=1.5,cex=0.9)
+text(-0.47,colMeans(bI1),c(rep(NA,times=6),'Zoogeographic region \n (Eurasian vs. Arctico-Siberian)','Zoogeographic region \n (N. American vs Arctico-Siberian)'),cex=0.8)
+axis(side=1)
+title(xlab='Model averaged coefficients')
+axis(side=2,pos=0,outer=F,lwd.ticks=NA,labels=F,lty=2)
+mtext('(b)',side=3,adj=0)
 dev.off()
 
-#Effect size
+
+#Effect size####
 ipdes<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_pdes.txt')
 ifdes<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fdes.txt')
 ifdpdes<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fdpdes.txt')
