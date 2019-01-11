@@ -550,7 +550,7 @@ dev.off()
 
 require(nlme)
 require(MuMIn)
-fulldf<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/analysisdataframe.txt')
+fulldf<-read.table('PhylogeneticFunctionalAnalysisPicanteR\\analysisdataframe.txt')
 
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
@@ -569,7 +569,7 @@ pairs(fulldf[,c(4,5,6,7,19,18,20,24,27,25)],upper.panel=panel.cor
       ,labels=c('Species richness','Phylogenetic \n diversity', 'Functional \n diversity', 'Functional \n dispersion','NDVI','Predator \n diversity','Winter minimum\n temperature','Habitat \n heterogeneity','Topographic \n heterogeneity','Ice free period'))
 
 
-standdf<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/standardised_analysisdataframe.txt')
+standdf<-read.table('PhylogeneticFunctionalAnalysisPicanteR\\standardised_analysisdataframe.txt')
 
 
 modeldf<-standdf[!is.na(standdf$TopographicHet) & !is.na(standdf$Regions),]
