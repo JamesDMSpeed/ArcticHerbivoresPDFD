@@ -298,10 +298,9 @@ tiff('PhylogeneticFunctionalAnalysisPicanteR/DiversityRatios_4pan_R1.tif',res=15
   newdatfdpd<-data.frame(pd_p=seq(min(dfdat$pd_p[dfdat$pd_p>0]),max(dfdat$pd_p),length.out=100))
   newdatfdpd$predp1<-predict(lmfdpd,newdata=newdatfdpd)
   lines(newdatfdpd$pd_p,newdatfdpd$predp1)
-  mtext(side=3,adj=0,'(b)',line=0.5,cex=1)
   
   dfdat$funccon<-rep(NA,times=nrow(dfdat))
-  dfdat$funccon[dfdat$sr>0]<-residuals(lmfdpd)
+  dfdat$funccon[dfdat$sr>0]<--(residuals(lmfdpd))
   plot(dfdat$sr,dfdat$funccon,xlab='Species richness',ylab='Functional convergence',las=1,type='n')
   with(dfdat[dfdat$realm==3 & dfdat$sr_p>0,],points(sr,funccon,pch=15,cex=0.7,col=colx[1]))
   with(dfdat[dfdat$realm==12 & dfdat$sr_p>0,],points(sr,funccon,pch=16,cex=0.7,col=colx[2]))
@@ -554,7 +553,11 @@ levelplot(divstack,par.settings=YlOrRdTheme,scales=list(draw=FALSE))#+
 layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,col='grey',lwd=0.5))
 
-#divstack2<-stack(sr_p,pd_p,fd_p,0-func_conras)
+
+#NB - Additive inverse here
+#
+#divstack2<-stack(sr_p,pd_p,fd_p,0-func_conras)#Additive inverse
+#
 #names(divstack2)<-c('Species richness','Phylogenetic diversity','Functional diversity','Functional convergence')
 #divstack2<-mask(divstack2,sr_geo)
 #divstack2m<-mask(divstack2,extend(envvars$CurrentIce,divstack2),maskvalue=1,updatevalue=NA)
@@ -1050,6 +1053,38 @@ Vsr3<-plot(varioFCSR,main='Functional convergence',xlim=c(0,5000000),ylim=c(0,1.
 print(Vsr1, split=c(1, 1, 3, 1), more=TRUE)
 print(Vsr2, split=c(2, 1, 3, 1), more=TRUE)
 print(Vsr3, split=c(3, 1, 3, 1), more=TRUE)
+dev.off()
+
+#GVIFs
+require(car)
+vif(globmodgls_pdsr)
+vif(globmodgls_fdsr)
+vif(globmodgls_fcsr)
+
+tiff('PhylogeneticFunctionalAnalysisPicanteR/ResponseEnvPairs_R1.tif',res=150,width=12,height=7,units='in')
+par(mfrow=c(3,7))
+plot(mdf2$pdsr1~mdf2$NDVI,ylab='Phylogenetic diversity',xlab='Vegetation productivity\nNDVI')
+plot(mdf2$pdsr1~mdf2$HerbivorePredators_R,ylab='Phylogenetic diversity',xlab='Predator richness')
+plot(mdf2$pdsr1~mdf2$WinterMinTemp,ylab='Phylogenetic diversity',xlab='Winter minimum temperature \nx10')
+plot(mdf2$pdsr1~mdf2$HabitatHet,ylab='Phylogenetic diversity',xlab='Habitat heterogeneity')
+plot(mdf2$pdsr1~mdf2$TopographicHet,ylab='Phylogenetic diversity',xlab='Topographic heterogeneity')
+plot(mdf2$pdsr1~mdf2$IceFreeHistory,ylab='Phylogenetic diversity',xlab='Ice free history')
+boxplot(mdf2$pdsr1~mdf2$Regions,ylab='Phylogenetic diversity',names=c('Eur','Arc-Sib','N Amer'),xlab='Region')
+plot(mdf2$fdsr1~mdf2$NDVI,ylab='Functional diversity',xlab='Vegetation productivity\nNDVI')
+plot(mdf2$fdsr1~mdf2$HerbivorePredators_R,ylab='Functional diversity',xlab='Predator richness')
+plot(mdf2$fdsr1~mdf2$WinterMinTemp,ylab='Functional diversity',xlab='Winter minimum temperature \nx10')
+plot(mdf2$fdsr1~mdf2$HabitatHet,ylab='Functional diversity',xlab='Habitat heterogeneity')
+plot(mdf2$fdsr1~mdf2$TopographicHet,ylab='Functional diversity',xlab='Topographic heterogeneity')
+plot(mdf2$fdsr1~mdf2$IceFreeHistory,ylab='Functional diversity',xlab='Ice free history')
+boxplot(mdf2$fdsr1~mdf2$Regions,ylab='Functional diversity',names=c('Eur','Arc-Sib','N Amer'),xlab='Region')
+plot(mdf2$fcsr~mdf2$NDVI,ylab='Functional convergence',xlab='Vegetation productivity\nNDVI')
+plot(mdf2$fcsr~mdf2$HerbivorePredators_R,ylab='Functional convergence',xlab='Predator richness')
+plot(mdf2$fcsr~mdf2$WinterMinTemp,ylab='Functional convergence',xlab='Winter minimum temperature\nx10')
+plot(mdf2$fcsr~mdf2$HabitatHet,ylab='Functional convergence',xlab='Habitat heterogeneity')
+plot(mdf2$fcsr~mdf2$TopographicHet,ylab='Functional convergence',xlab='Topographic heterogeneity')
+plot(mdf2$fcsr~mdf2$IceFreeHistory,ylab='Functional convergence',xlab='Ice free history')
+boxplot(mdf2$fcsr~mdf2$Regions,ylab='Functional convergence',names=c('Eur','Arc-Sib','N Amer'),xlab='Region')
+
 dev.off()
 
 
@@ -2014,9 +2049,14 @@ fdbird_p<-fdbirdras/sum(birdfuncdata$phy$edge.length)
 summary(fdbird_p)
 
 #Bird FDPD
-fdpdbird<-fdbird_p/pdbird_p
-plot(fdpdbird)
-funconbird<-1-fdpdbird
+birddat<-data.frame(pdbird_p=getValues(pdbird_p),fdbird_p=getValues(fdbird_p))
+with(birddat[birddat$pdbird_p>0,],plot(pdbird_p,fdbird_p))
+fdpdbird<-with(birddat[birddat$pdbird_p>0,],residuals(lm(fdbird_p~log(pdbird_p))))
+fdpdbirdras<-fdbirdras
+fdpdbirdras[pdbird_p>0]<--(fdpdbird)#Additive inverse
+plot(fdpdbirdras)
+
+
 #Mammal PD
 mamcom<-commdat[,c(1:4,12:14,20,27:34,38:74)]#53 mammal species
 mamphydata<-match.phylo.comm(phylo2,mamcom)
@@ -2047,13 +2087,15 @@ fdmam_p<-fdmamras/sum(mamfuncdata$phy$edge.length)
 summary(fdmam_p)
 
 #Mammal FDPD
-fdpdmam<-fdmam_p/pdmam_p
-plot(fdpdmam)
-funcconmam<-1-fdpdmam
+mamdat<-data.frame(pdmam_p=getValues(pdmam_p),fdmam_p=getValues(fdmam_p))
+fdpdmam<-with(mamdat[mamdat$pdmam_p>0,],residuals(lm(fdmam_p~log(pdmam_p))))
+fdpdmamras<-fdmamras
+fdpdmamras[pdmam_p>0]<--(fdpdmam)#Additive Inverse
+plot(fdpdmamras)
 
 #Bird and mammals diversity
-birddiv<-stack(srbirdras,pdbird_p,fdbird_p,funconbird)
-mamdiv<-stack(srmamras,pdmam_p,fdmam_p,funcconmam)
+birddiv<-stack(srbirdras,pdbird_p,fdbird_p,fdpdbirdras)#Additive Inverse
+mamdiv<-stack(srmamras,pdmam_p,fdmam_p,fdpdmamras)#Additive Inverse
 birddiv<-mask(birddiv,birddiv$layer.1,maskvalue=0,updatevalue=NA)#Masking cells with no birds
 mamdiv<-mask(mamdiv,mamdiv$layer.1,maskvalue=0,updatevalue=NA)#Masking cells with no mammals
 birdmamdiv<-stack(birddiv,mamdiv)
@@ -2072,7 +2114,7 @@ p2 <- levelplot(birdmamdiv[[2]], at=my.at, par.settings=YlOrRdTheme(layout.heigh
 p3 <- levelplot(birdmamdiv[[3]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Bird functional diversity',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-p4 <- levelplot(birdmamdiv[[4]], par.settings=BTCTheme(region=rev(BTC(9)),layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Bird functional convergence',cex=0.8))+
+p4 <- levelplot(birdmamdiv[[4]], par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Bird functional convergence',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
 p5 <- levelplot(birdmamdiv[[5]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Mammal species richness',cex=0.8))+
@@ -2084,18 +2126,18 @@ p6 <- levelplot(birdmamdiv[[6]], at=my.at, par.settings=YlOrRdTheme(layout.heigh
 p7 <- levelplot(birdmamdiv[[7]], at=my.at,par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Mammal functional diversity',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
-p8 <- levelplot(birdmamdiv[[8]], par.settings=BTCTheme(region=rev(BTC(9)),layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Mammal functional convergence',cex=0.8))+
+p8 <- levelplot(birdmamdiv[[8]], par.settings=YlOrRdTheme(layout.heights=list(top.padding=0,bottom.padding=0)),scales=list(draw=FALSE), margin=FALSE,main=list('Mammal functional convergence',cex=0.8))+
   layer(sp.points(np,col=1))+
   layer(sp.polygons(allarc,lwd=0.5,col=grey(0.5)))
 
 print(p1, split=c(1, 1, 2, 4), more=TRUE)
 print(p2, split=c(1, 2, 2, 4), more=TRUE)
 print(p3, split=c(1, 3, 2, 4), more=TRUE)
-print(p4, split=c(1, 4, 2, 4), more=TRUE)
+print(diverge0(p4,'RdBu'), split=c(1, 4, 2, 4), more=TRUE)
 print(p5, split=c(2, 1, 2, 4), more=TRUE)
 print(p6, split=c(2, 2, 2, 4), more=TRUE)
 print(p7, split=c(2, 3, 2, 4), more=TRUE)
-print(p8, split=c(2, 4, 2, 4))
+print(diverge0(p8,'RdBu'), split=c(2, 4, 2, 4))
 dev.off()
 
 #Bird mammal and total richness raw
