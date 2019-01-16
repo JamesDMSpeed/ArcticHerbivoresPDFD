@@ -632,7 +632,7 @@ summary(effsizestack$Functional.divergence_es[randomstack$layer.3>0.975 & (realm
 pairs(envvars[[c(4,5,6,10,11,13)]])
 envvars1<-extend(envvars,divstack2)
 alllayers<-stack(divstack2,effsizestack,randomstack,realms,envvars1,arczonesR)
-names(alllayers)[27]<-'ArcticZone'
+names(alllayers)[25]<-'ArcticZone'
 alldata<-extract(alllayers,rasterToPoints(divstack2$Species.richness,spatial=T),sp=T)
 alldatadf<-cbind(alldata@coords,alldata@data)
 alldatadf$HerbivorePredators_R<-resid(lm(alldatadf$HerbivorePredators~alldatadf$NDVI))  
@@ -834,15 +834,16 @@ write.table(summary(modavgcor_fd)$coefmat.full,'~/DISENTANGLE/WP3/Arctic/Analysi
 write.table(summary(modavgcor_fd)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_fd.txt')
 
 #FDPD
-fullgls_fdpd<-gls((1-Functional.Phylognetic.diversity)~NDVI+WinterMinTemp+
+modeldfFC<-modeldf[!is.na(modeldf$Functional.convergence),]
+fullgls_fdpd<-gls(Functional.convergence~NDVI+WinterMinTemp+
                     HabitatHet+TopographicHet+
                     IceFreeHistory+
-                    HerbivorePredators_R + as.factor(Regions),correlation=corExp(form=~x+y, nugget=T), method="ML",data=modeldf)
+                    HerbivorePredators_R + as.factor(Regions),correlation=corExp(form=~x+y, nugget=T), method="ML",data=modeldfFC)
 
-globmodgls_fdpd<-gls((1-Functional.Phylognetic.diversity)~NDVI+WinterMinTemp+
+globmodgls_fdpd<-gls(Functional.convergence~NDVI+WinterMinTemp+
                        HabitatHet+TopographicHet+
                        IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
-                     correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fdpd$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldf)
+                     correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fdpd$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=modeldfFC)
 
 varioFDPD<- Variogram(globmodgls_fdpd,resType = 'normalized')
 plot(varioFDPD,main='Functional convergence')
@@ -853,9 +854,10 @@ modselcor_fdpd<-model.sel(modsetcor_fdpd)
 modavgcor_fdpd<-model.avg(modselcor_fdpd)
 importance(modavgcor_fdpd)
 summary(modavgcor_fdpd)
-write.table(importance(modavgcor_fdpd),'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fdpd.txt')
-write.table(summary(modavgcor_fdpd)$coefmat.full,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd.txt')
-write.table(summary(modavgcor_fdpd)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_fdpd.txt')
+write.table(importance(modavgcor_fdpd),'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fdpd_R1.txt')
+write.table(summary(modavgcor_fdpd)$coefmat.full,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd_R1.txt')
+write.table(summary(modavgcor_fdpd)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_fdpd_R1.txt')
+
 
 #Variograms plot
 tiff('PhylogeneticFunctionalAnalysisPicanteR/Variograms.tif',width=5,height=5,units='in',res=150)
@@ -868,6 +870,165 @@ print(V2, split=c(2, 1, 2, 2), more=TRUE)
 print(V3, split=c(1, 2, 2, 2), more=TRUE)
 print(V4, split=c(2, 2, 2, 2))
 dev.off()
+
+
+#GLS of residuals against species richness ####
+#MDf
+mdf<-data.frame(cbind(modeldf,fulldf[!is.na(standdf$TopographicHet) & !is.na(standdf$Regions),c(3,5:7)]))
+mdf2<-mdf[!is.na(mdf$Functional.convergence),]
+mdf2$fcsr<-residuals(lm(mdf2$Functional.convergence.1~mdf2$Species.richness.2))
+fullgls_fcsr<-gls(fcsr~NDVI+WinterMinTemp+
+                    HabitatHet+TopographicHet+
+                    IceFreeHistory+
+                    HerbivorePredators_R + as.factor(Regions),correlation=corExp(form=~x+y, nugget=T), method="ML",data=mdf2)
+
+globmodgls_fcsr<-gls(fcsr~NDVI+WinterMinTemp+
+                       HabitatHet+TopographicHet+
+                       IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
+                     correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fcsr$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=mdf2)
+modsetcor_fcsr<-dredge(globmodgls_fcsr,trace=2,fixed='Species.richness')
+modselcor_fcsr<-model.sel(modsetcor_fcsr)
+modavgcor_fcsr<-model.avg(modselcor_fcsr)
+importance(modavgcor_fcsr)
+summary(modavgcor_fcsr)
+
+ #FDSR
+mdf2$fdsr1<-residuals(lm(mdf2$Functional.diversity.1~log(mdf2$Species.richness.2)))#Log for FD-SR
+fullgls_fdsr<-gls(fdsr1~NDVI+WinterMinTemp+
+                    HabitatHet+TopographicHet+
+                    IceFreeHistory+
+                    HerbivorePredators_R + as.factor(Regions),correlation=corExp(form=~x+y, nugget=T), method="ML",data=mdf2)
+
+globmodgls_fdsr<-gls(fdsr1~NDVI+WinterMinTemp+
+                       HabitatHet+TopographicHet+
+                       IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
+                     correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_fdsr$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=mdf2)
+modsetcor_fdsr<-dredge(globmodgls_fdsr,trace=2)
+modselcor_fdsr<-model.sel(modsetcor_fdsr)
+modavgcor_fdsr<-model.avg(modselcor_fdsr)
+importance(modavgcor_fdsr)
+summary(modavgcor_fdsr)
+
+#PDSR
+mdf2$pdsr1<-residuals(lm(mdf2$Phylogenetic.diversity.1~mdf2$Species.richness.2))#Linear for PD-SR
+fullgls_pdsr<-gls(pdsr1~NDVI+WinterMinTemp+
+                    HabitatHet+TopographicHet+
+                    IceFreeHistory+
+                    HerbivorePredators_R + as.factor(Regions),correlation=corExp(form=~x+y, nugget=T), method="ML",data=mdf2)
+
+globmodgls_pdsr<-gls(pdsr1~NDVI+WinterMinTemp+
+                       HabitatHet+TopographicHet+
+                       IceFreeHistory+HerbivorePredators_R + as.factor(Regions),
+                     correlation=corExp(form=~x+y,nugget=T,value=coef(fullgls_pdsr$modelStruct$corStruct,unconstrained=F),fixed=T), method="ML",data=mdf2)
+modsetcor_pdsr<-dredge(globmodgls_pdsr,trace=2)
+modselcor_pdsr<-model.sel(modsetcor_pdsr)
+modavgcor_pdsr<-model.avg(modselcor_pdsr)
+importance(modavgcor_pdsr)
+summary(modavgcor_pdsr)
+
+
+write.table(importance(modavgcor_pdsr),'importanceSR/importance_gls_pdsr.txt')
+write.table(summary(modavgcor_pdsr)$coefmat.full,'importanceSR/modcoef_gls_pdsr.txt')
+write.table(summary(modavgcor_pdsr)$coefmat.subset,'importanceSR/modcoefcond_gls_pdsr.txt')
+write.table(importance(modavgcor_fdsr),'importanceSR/importance_gls_fdsr.txt')
+write.table(summary(modavgcor_fdsr)$coefmat.full,'importanceSR/modcoef_gls_fdsr.txt')
+write.table(summary(modavgcor_fdsr)$coefmat.subset,'importanceSR/modcoefcond_gls_fdsr.txt')
+write.table(importance(modavgcor_fcsr),'importanceSR/importance_gls_fcsr.txt')
+write.table(summary(modavgcor_fcsr)$coefmat.full,'importanceSR/modcoef_gls_fcsr.txt')
+write.table(summary(modavgcor_fcsr)$coefmat.subset,'importanceSR/modcoefcond_gls_fcsr.txt')
+
+#RVI&MAC PDSR ####
+#Diversity
+isr<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_sr.txt')
+ipdsr<-read.table('importanceSR/importance_gls_pdsr.txt')
+ifdsr<-read.table('importanceSR/importance_gls_fdsr.txt')
+ifcsr<-read.table('importanceSR/importance_gls_fcsr.txt')
+#Give names
+colnames(isr)<-'Species'
+colnames(ipdsr)<-'PhylogeneticDiv'
+colnames(ifdsr)<-'FunctionalDiv'
+colnames(ifcsr)<-'FunctionalCon'
+
+impdivsr<-cbind( isr[order(rownames(isr)),], ipdsr[order(rownames(ipdsr)),],ifdsr[order(rownames(ifdsr)),],ifcsr[order(rownames(ifcsr)),])
+colnames(impdivsr)<-c('Species','Phylogenetic diversity','Functional diversity','Functional convergence')
+rownames(impdivsr)<-rownames(isr)[order(rownames(isr))]
+impdivsr
+impdivsrsort<-impdivsr[order(-impdivsr[,1]),]
+rownames(impdivsrsort)<-(c('NDVI','Predator diversity (R)','Topographic heterogeneity','Habitat heterogeneity','Ice-free history','Winter minimum temperature','Zoogeographic region (F)'))
+impdivsortsrx<-impdivsrsort[c(2,1,4,3,6,5,7),]
+colsImp<-brewer.pal(5,'Blues')[2:5]
+par(mar=c(5,12,1,1))
+barplot(t(as.matrix(impdivsortsrx)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
+        ,beside=T,legend.text=T,args.legend=list(y=nrow(impdivsortx)-5,x=-0.05,title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional:Phylogenetic'))))
+
+
+#Model averaged coefficients
+#Diversity 
+#Full coefficents
+coefsr<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_cond_gls_sr.txt')
+coefpdsr<-read.table('importanceSR/modcoefcond_gls_pdsr.txt')
+coeffdsr<-read.table('importanceSR/modcoefcond_gls_fdsr.txt')
+coeffcsr<-read.table('importanceSR/modcoefcond_gls_fcsr.txt')
+#Reorder rows
+coefsr1<-coefsr[order(rownames(coefsr)),]
+coefpdsr<-coefpdsr[order(rownames(coefpdsr)),]
+coeffdsr<-coeffdsr[order(rownames(coeffdsr)),]
+coeffcsr<-coeffcsr[order(rownames(coeffcsr)),]
+
+macplot_est<-rbind(SR=coefsr[,1],PD=coefpdsr[,1],FD=coeffdsr[,1],FDPD=coeffcsr[,1])
+colnames(macplot_est)<-rownames(coefsr)
+macplot_est<-macplot_est[,c(6,4,7,3,8,9,5,2,3)]
+colnames(macplot_est)<-c('Intercept','Predator diversity (R)','NDVI','Habitat heterogeneity','Topographic heterogeneity','Winter minimum temperature','Ice-free history','Region:Eur vs. Arc','Region: NA vs. Arc')
+macplot_se<-rbind(SR=coefsr[,2],PD=coefpdsr[,2],FD=coeffdsr[,2],FDPD=coeffcsr[,2])
+macplot_se<-macplot_se[,c(6,4,7,3,8,9,5,2,3)]
+macplot_p<-rbind(SR=coefsr[,5],PD=coefpdsr[,5],FD=coeffdsr[,5],FDPD=coeffcsr[,5])
+macplot_p<-macplot_p[,c(6,4,7,3,8,9,5,2,3)]
+macplot_p[macplot_p>=0.05]<-1
+macplot_p[macplot_p<0.05]<-16
+
+
+tiff('PhylogeneticFunctionalAnalysisPicanteR/VarImpModAvgCoef_SR.tif',width = 8,height=5,units='in',res=150,pointsize=8)
+par(mfrow=c(1,2))
+par(mar=c(5,13,1,1))
+#Imp
+#bI<-barplot(cbind(t(as.matrix(impdivsortx)),rep(NA,times=4)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp#,col=c('darkred','red','pink4',grey(0.8))
+#        ,beside=T,legend.text=T,args.legend=list(cex=0.9,'topr',title='Diversity',legend=rev(c('Species','Phylogenetic','Functional','Functional divergence'))))
+bI<-barplot(cbind(t(as.matrix(impdivsortsrx[,2:4])),rep(NA,times=4)), horiz=T,las=1,xlab='Relative variable importance',col=colsImp[2:4]#,col=c('darkred','red','pink4',grey(0.8))
+            ,beside=T,legend.text=T,args.legend=list(cex=0.9,'topr',title='Diversity',legend=rev(c('Phylogenetic diversity','Functional diversity','Functional convergence'))),
+            names.arg=c('Predator diversity (R)','Vegetation productivity \n (NDVI)','Habitat heterogeneity','Topographic heterogeneity','Climatic severity \n (winter minimum temperature)',
+                        'Landscape history \n (time since glaciation)','Zoogeographic region (F)',''))
+mtext('(a)',side=3,adj=0)
+par(mar=c(5,2,1,1))
+par(xpd=T)
+bI1<-barplot(cbind(t(as.matrix(impdivsortsrx[,2:4])),rep(NA,times=3)), horiz=T,beside=T,xlim=c(-0.03,0.012),col=F,border=F,
+             xlab='Model averaged coefficients',las=1,names.arg=rep(NA,times=8))#,names.arg=colnames(macplot_est[,2:ncol(macplot_est)]))
+#names.arg=c(rep(NA,times=6),colnames(macplot_est[,2:ncol(macplot_est)])[7:8]))
+points(macplot_est[2:4,2:ncol(macplot_est)],bI1,pch=macplot_p[2:4,2:ncol(macplot_p)],col=colsImp[2:4],lwd=2,cex=1.5) #col=c('black','orange','blue','pink4')) 
+arrows(macplot_est[2:4,2:ncol(macplot_est)]+1.96*macplot_se[2:4,2:ncol(macplot_est)],bI1,
+       macplot_est[2:4,2:ncol(macplot_est)]-1.96*macplot_se[2:4,2:ncol(macplot_est)],bI1,
+       angle=90,length=0.05,code=3,col=colsImp[2:4])#,col=c('black','orange','blue','pink4'))
+#legend('topr',pch=c(1,16),col=colsImp[4],c('P>=0.05','P<0.05'),title='Significance',pt.cex=1.5,cex=0.9)
+text(-0.022,colMeans(bI1),c(rep(NA,times=6),'Zoogeographic region \n (Eurasian vs. Arctico-Siberian)','Zoogeographic region \n (N. American vs Arctico-Siberian)'),cex=0.8)
+axis(side=1)
+title(xlab='Model averaged coefficients')
+axis(side=2,pos=0,outer=F,lwd.ticks=NA,labels=F,lty=2)
+mtext('(b)',side=3,adj=0)
+dev.off()
+
+#Variograms PDSR
+
+varioPDSR<- Variogram(globmodgls_pdsr,resType = 'normalized')
+varioFDSR<- Variogram(globmodgls_fdsr,resType = 'normalized')
+varioFCSR<- Variogram(globmodgls_fcsr,resType = 'normalized')
+tiff('PhylogeneticFunctionalAnalysisPicanteR/Variograms_sr.tif',width=7,height=3,units='in',res=150)
+Vsr1<-plot(varioPDSR,main='Phylogenetic diversity',xlim=c(0,5000000),ylim=c(0,1.3))
+Vsr2<-plot(varioFDSR,main='Functional diversity',xlim=c(0,5000000),ylim=c(0,1.3))
+Vsr3<-plot(varioFCSR,main='Functional convergence',xlim=c(0,5000000),ylim=c(0,1.3))
+print(Vsr1, split=c(1, 1, 3, 1), more=TRUE)
+print(Vsr2, split=c(2, 1, 3, 1), more=TRUE)
+print(Vsr3, split=c(3, 1, 3, 1), more=TRUE)
+dev.off()
+
 
 #Effect size - use only cells with SR >1 ####
 modeldf_es<-modeldf[!is.na(modeldf$Phylogenetic.diversity_es),]
@@ -939,7 +1100,7 @@ write.table(summary(modavgcor_fdpdes)$coefmat.subset,'~/DISENTANGLE/WP3/Arctic/A
 isr<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_sr.txt')
 ipd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_pd.txt')
 ifd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fd.txt')
-ifdpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fdpd.txt')
+ifdpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/importance_gls_fdpd_R1.txt')
 #Give names
 colnames(isr)<-'Species'
 colnames(ipd)<-'Phylogenetic'
@@ -965,7 +1126,7 @@ barplot(t(as.matrix(impdivsortx)), horiz=T,las=1,xlab='Relative variable importa
 fullcoefsr<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_sr.txt')
 fullcoefpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_pd.txt')
 fullcoeffd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fd.txt')
-fullcoeffdpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd.txt')
+fullcoeffdpd<-read.table('~/DISENTANGLE/WP3/Arctic/AnalysisJan2018/modcoef_gls_fdpd_R1.txt')
 #Reorder rows
 fullcoefsr1<-fullcoefsr[order(rownames(fullcoefsr)),]
 fullcoefpd1<-fullcoefpd[order(rownames(fullcoefpd)),]
