@@ -7,21 +7,21 @@ rm(list=ls())
 objects()
 
 ################################# set working directory
-#setwd("C:\\Eeva_jobb\\artikkeleita tekeillä\\James herbivore diversity\\analysis")
+#setwd("C:\\Eeva_jobb\\artikkeleita tekeill?\\James herbivore diversity\\analysis")
 setwd('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final trait classification')
 
 #################################  get packages 
 
 require(FactoMineR) # factorial analysis of mixed data
-require(ade4) # mantel test
+require(vegan) # mantel test
 require(ape) # export data to biodiverse
 require(RColorBrewer)#Colours to match the results figures
-
+require(picante)#testing phylogenetic conservatism
 #################################  get data
 
 #traits<-read.delim("herbivore_traits_sept17.txt", dec=",")
 #traits<-read.delim("S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final trait classification\\herbivore_traits_apr18.txt", dec=".")
-traits<-read.delim("herbivore_traits_apr18.txt", dec=".")
+traits<-read.delim("Final trait classification/herbivore_traits_apr18.txt", dec=".")
 names(traits)
 
 
@@ -270,8 +270,46 @@ for(i in c(17:21,16,7,13,14,8,9,11,22,12)){
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 # testing the sensitivity of the clustering/tree structure for a given trait
-# not done for now
 
+#Distance matrix on all traits
+d0<-as.matrix(dist(res.famd$ind$coord))
+diag(d0) <-0
+mantelstat<-c()
+mantelp<-c()
+#Drop each variable one at a time by setting as supplementary variable
+dfT<-Traits_famd
+for(i in 1:ncol(dfT)){
+res.famd1<-FAMD(dfT,sup.var=c(i),ncp=6) # factorial analysis of mixed data
+d1<-as.matrix(dist(res.famd1$ind$coord))
+diag(d1) <- 0
+#Mantel test
+m1<-mantel(d0,d1)
+mantelstat[i]<-m1$statistic
+mantelp[i]<-m1$signif}
+mantelstat
+mantelp #High correlations with dropping any 1 variable
+
+#Dropping multiple
+mantelstat<-c()
+mantelp<-c()
+dfList<-list()
+dfList<-replicate(100,sort(sample(1:ncol(dfT),size=sample(9:15,1))))
+for(i in 1:100){
+  print(i)  
+  res.famd1<-FAMD(dfT[,dfList[[i]]],ncp=6) # factorial analysis of mixed data
+  d1<-as.matrix(dist(res.famd1$ind$coord))
+  diag(d1) <- 0
+  #Mantel test
+  m1<-mantel(d0,d1)
+  mantelstat[i]<-m1$statistic
+  mantelp[i]<-m1$signif}
+mantelstat
+mantelp #High correlations with dropping any 1 variable
+nvars<-sapply(dfList,FUN=length)
+tiff('MantelTests.tif',width=5,height=3,units='in',res=150)
+par(mar=c(4,4,1,1))
+boxplot(mantelstat~nvars,las=1,xlab='Number of traits',ylab='Correlation coefficient')
+dev.off()
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #################  export hierarchical classification as newick tree for biodiverse  ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -280,3 +318,17 @@ for(i in c(17:21,16,7,13,14,8,9,11,22,12)){
 herbfunctree <- as.phylo(hc_2$call$t$tree) 
 plot(herbfunctree)
 write.tree(phy=herbfunctree, file="arcticherbivorefunctiontree_apr18.nwk")
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#################  check phylogenetic conservatism of traits ----
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+phylogeny<-read.tree('Final phylogeny/rooted.nwk')
+plot(phylogeny)
+phylogeny$tip.label
+
+Traits$spname<-Traits$Binomial
+Traits$spname<-sub('_',' ',Traits$spname)
+biomassV<-Traits$body_mass
+Kcalc()
