@@ -448,8 +448,8 @@ func_con<-residuals(lmFDPD)
 #divstack2$FuncPhy_logmod[!is.na(divstack2$Phylogenetic.diversity)]<-func_con
 
 func_con_ras<-fdras
-func_con_ras[pdras>0 & srras>1]<-func_con
-func_con_ras[srras<2]<-NA
+func_con_ras[srras>0]<-func_con
+func_con_ras[srras<1]<-NA
 func_conras<-mask(func_con_ras,extend(envvars$CurrentIce,pd_p),maskvalue=1,updatevalue=NA)
 plot(func_conras)
 lp1<-levelplot(func_conras,main='FC',margin=F)
@@ -564,7 +564,7 @@ layer(sp.points(np,col=1))+
 #plot(divstack2m)
 #writeRaster(divstack2m,'PhylogeneticFunctionalAnalysisPicanteR/DiversityStack')
 divstack2<-stack('PhylogeneticFunctionalAnalysisPicanteR/DiversityStack')
-
+divstack2<-mask(divstack2,extend(envvars$CurrentIce,divstack2),maskvalue=1,updatevalue=NA)
 my.at <- seq(0, 1, by = 0.1)
 levelplot(divstack2,at=my.at,par.settings=YlOrRdTheme())
 quantile(divstack2)
@@ -601,8 +601,8 @@ dev.off()
 
 
 #Effect sizes and randomisation tests
-#effsizestack<-stack(setValues(r1,pd_es$pd.obs.z),setValues(r1,fd_es$pd.obs.z),0-funccon_es)
-#writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR/EffectSizesStack')
+effsizestack<-stack(setValues(r1,pd_es$pd.obs.z),setValues(r1,fd_es$pd.obs.z),0-funccon_es)
+writeRaster(effsizestack,'PhylogeneticFunctionalAnalysisPicanteR/EffectSizesStack')
 effsizestack<-stack('PhylogeneticFunctionalAnalysisPicanteR/EffectSizesStack')
 names(effsizestack)<-c('Phylogenetic diversity_es','Functional diversity_es','Functional convergence_es')
 effsizestack<-mask(effsizestack,envvars1$CurrentIce,maskvalue=1)
