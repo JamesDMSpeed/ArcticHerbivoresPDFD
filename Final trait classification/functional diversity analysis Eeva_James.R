@@ -346,9 +346,10 @@ phylosignal(as.numeric(matched$data$group_size_order),matched$phy,checkdata=F)
 
 physigdat<-c()
 for(i in 1:ncol(Traits)){
-  if(is.numeric(Traits[,i])){
+ # if(is.numeric(Traits[,i])){
     varname<-(names(Traits)[i])
     phylosig<-as.vector(phylosignal(as.numeric(matched$data[,i]),matched$phy,checkdata=F))
     a<-cbind(varname,phylosig)  
     physigdat<-rbind(physigdat,a)}
-}
+#}
+write.csv(physigdat,'PhylogeneticSignal.csv')
