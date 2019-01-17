@@ -8,7 +8,7 @@ objects()
 
 ################################# set working directory
 #setwd("C:\\Eeva_jobb\\artikkeleita tekeill?\\James herbivore diversity\\analysis")
-setwd('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final trait classification')
+#setwd('S:\\DISENTANGLE\\WP3\\ArcticHerbivoreFDPD\\Final trait classification')
 
 #################################  get packages 
 
@@ -327,8 +327,28 @@ write.tree(phy=herbfunctree, file="arcticherbivorefunctiontree_apr18.nwk")
 phylogeny<-read.tree('Final phylogeny/rooted.nwk')
 plot(phylogeny)
 phylogeny$tip.label
+#Replace synonyms
+#phylogeny$tip.label[phylogeny$tip.label=="Anser_caerulescens"]<-"Chen_caerulescens"
+phylogeny$tip.label[phylogeny$tip.label=="Spermophilus_parryii"]<-"Urocitellus_parryii"
 
+#Set rownames of trait data as taxa
 Traits$spname<-Traits$Binomial
-Traits$spname<-sub('_',' ',Traits$spname)
-biomassV<-Traits$body_mass
-Kcalc()
+Traits$spname<-chartr(" ","_",Traits$spname)
+rownames(Traits)<-Traits$spname
+
+#Match together
+matched<-match.phylo.data(phylogeny,Traits)
+
+Kcalc(as.numeric(matched$data$body_mass),matched$phy,checkdata=F)
+phylosignal(as.numeric(matched$data$body_mass),matched$phy,checkdata=F)
+phylosignal(as.numeric(matched$data$group_size_order),matched$phy,checkdata=F)
+
+
+physigdat<-c()
+for(i in 1:ncol(Traits)){
+  if(is.numeric(Traits[,i])){
+    varname<-(names(Traits)[i])
+    phylosig<-as.vector(phylosignal(as.numeric(matched$data[,i]),matched$phy,checkdata=F))
+    a<-cbind(varname,phylosig)  
+    physigdat<-rbind(physigdat,a)}
+}
