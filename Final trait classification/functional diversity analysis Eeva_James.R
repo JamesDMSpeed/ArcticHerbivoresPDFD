@@ -257,14 +257,23 @@ dataclust$Clustname[dataclust$clust==3]<-'Limnic\nmigrators'
 
 mergeclust<-merge(Traits,dataclust,by.y='species',by.x='Binomial')
 par(mfrow=c(4,4))
-par(mar=c(5,10,3,0))
+par(mar=c(5,3,3,9))
 for(i in c(23,10)){
- boxplot(as.numeric(mergeclust[,i])~mergeclust$Clustname,main=names(mergeclust)[i],las=1)}
-par(mar=c(5,12,3,3))
+ boxplot(as.numeric(mergeclust[,i])~mergeclust$Clustname,main=names(mergeclust)[i],las=1,cex.axis=0.82)}
+par(mar=c(5,3,3,10))
 for(i in c(17:21,16,7,13,14,8,9,11,22,12)){
  par(las=1)
-  spineplot(as.factor(mergeclust$Clustname),as.factor(mergeclust[,i]),main=names(mergeclust)[i],xlab="",ylab="")}
-
+  par(xpd=T)
+  #spineplot(as.factor(mergeclust$Clustname),as.factor(mergeclust[,i]),main=names(mergeclust)[i],xlab="",ylab="",yaxlabels = F)
+  #legend('left',inset=c(-0.5,0),rev(levels(as.factor(mergeclust[,i]))),
+  #       fill=rev(grey.colors(length(levels(as.factor(mergeclust[,i]))))))}
+  spineplot(as.factor(mergeclust$Clustname),as.factor(mergeclust[,i]),main=names(mergeclust)[i],xlab="",ylab="",yaxlabels = F,axes=F)
+  axis(2,cex.axis=0.82)
+  axis(1,at=c(0.2,0.6,0.9),levels(as.factor(mergeclust$Clustname))
+       ,tick=F,cex.axis=0.82)
+  legend(1.1,0.5,rev(levels(as.factor(mergeclust[,i]))),cex=0.82,
+         fill=rev(grey.colors(length(levels(as.factor(mergeclust[,i]))))))}
+  
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 ################# mantel test   ----
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
